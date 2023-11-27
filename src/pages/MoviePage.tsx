@@ -1,52 +1,42 @@
-import {
-  ScrollView,
-  Image,
-  NativeSyntheticEvent,
-  NativeScrollEvent,
-} from "react-native";
+import { ScrollView } from "react-native";
 import Layout from "../components/Layout";
 import MovieSlider from "../components/MovieSlider";
 import { useQuery } from "@tanstack/react-query";
-import { useSetRecoilState } from "recoil";
-import { IGetMoviesResult, getMovies } from "../utils/api";
-import { makeImagePath } from "../utils/makeImagePath";
-import styled from "styled-components/native";
-import { headerBackgroundShowAtom } from "../utils/atom";
-
-const Banner = styled.View`
-  height: 500px;
-`;
+import { IGetMoviesResult, IMovie, getMovies } from "../utils/api";
+import useScroll from "../hooks/useScroll";
+import Banner from "../components/Banner";
+import { AxiosError } from "axios";
+import useGenres from "../hooks/useGenres";
 
 const MoviePage = () => {
-  const setHeaderBackgroundShow = useSetRecoilState(headerBackgroundShowAtom);
-  const { data, isLoading } = useQuery<IGetMoviesResult>({
+  const { scrollEventThrottle, onScroll, scrollRef } = useScroll();
+  const { data, isLoading } = useQuery<IGetMoviesResult, AxiosError, IMovie>({
     queryKey: ["movie", "now_playing"],
     queryFn: () => getMovies({ category: "now_playing" }),
     refetchOnWindowFocus: false,
+    select: (data) =>
+      data.results[Math.floor(Math.random() * data.results.length)],
   });
-
-  const onScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
-    const scroll = event.nativeEvent.contentOffset.y;
-    if (scroll > 80) {
-      setHeaderBackgroundShow(true);
-    } else {
-      setHeaderBackgroundShow(false);
-    }
-  };
+  const genresResult = useGenres({ type: "movie" });
 
   return (
     <Layout title="Movie">
-      <ScrollView scrollEventThrottle={30} onScroll={onScroll}>
-        <Banner>
-          {data && (
-            <Image
-              height={500}
-              source={{
-                uri: makeImagePath(data.results[0].poster_path, "w500"),
-              }}
-            />
-          )}
-        </Banner>
+      <ScrollView
+        scrollEventThrottle={scrollEventThrottle}
+        onScroll={onScroll}
+        ref={scrollRef}
+      >
+        <Banner
+          path={data?.poster_path || ""}
+          title={data?.title || ""}
+          genres={
+            data?.genre_ids.map(
+              (id) =>
+                genresResult.genres.find((genre) => genre.id === id)?.name || ""
+            ) || []
+          }
+          isLoading={isLoading}
+        />
         <MovieSlider category={{ key: "now_playing", name: "Now Playing" }} />
         <MovieSlider category={{ key: "popular", name: "Popular" }} />
         <MovieSlider category={{ key: "top_rated", name: "Top Rated" }} />

@@ -1,8 +1,10 @@
 import styled from "styled-components/native";
 import { useQuery } from "@tanstack/react-query";
+import { useRef } from "react";
 import { ScrollView, ActivityIndicator, TouchableOpacity } from "react-native";
 import { IGetTvShowsResult, getTvShows, tvShowCategories } from "../utils/api";
 import { makeImagePath } from "../utils/makeImagePath";
+import { useFocusEffect } from "@react-navigation/native";
 
 const Container = styled.View<{ $last: boolean }>`
   margin-top: 20px;
@@ -40,10 +42,17 @@ interface ISliderProps {
 }
 
 const TvShowSlider = ({ category, last = false }: ISliderProps) => {
+  const scrollRef = useRef<ScrollView | null>(null);
   const { data, isLoading } = useQuery<IGetTvShowsResult>({
     queryKey: ["tv", category.key],
     queryFn: () => getTvShows({ category: category.key }),
     refetchOnWindowFocus: false,
+  });
+
+  useFocusEffect(() => {
+    return () => {
+      scrollRef.current?.scrollTo({ y: 0 });
+    };
   });
 
   return (
@@ -56,7 +65,11 @@ const TvShowSlider = ({ category, last = false }: ISliderProps) => {
           <ActivityIndicator size="small" />
         </Loader>
       ) : (
-        <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
+        <ScrollView
+          ref={scrollRef}
+          horizontal={true}
+          showsHorizontalScrollIndicator={false}
+        >
           {data?.results.map((tv) => (
             <TouchableOpacity key={tv.id} activeOpacity={0.6}>
               <Thumbnail>

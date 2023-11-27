@@ -7,7 +7,7 @@ const config = {
   },
 };
 
-interface IMovie {
+export interface IMovie {
   adult: boolean;
   backdrop_path: string;
   genre_ids: number[];
@@ -55,7 +55,7 @@ export const getMovies = async ({ category }: IGetMoviesProps) => {
   return data;
 };
 
-interface ITvShow {
+export interface ITvShow {
   adult: boolean;
   backdrop_path: string;
   genre_ids: number[];
@@ -92,6 +92,24 @@ interface IGetTvShowsProps {
 export const getTvShows = async ({ category }: IGetTvShowsProps) => {
   const data = await axios
     .get(`${BASE_URL}/tv/${category}?language=en-US&page=1`, config)
+    .then((response) => response.data)
+    .catch((e) => {
+      throw e;
+    });
+  return data;
+};
+
+export interface IGetGenresResult {
+  genres: { id: number; name: string }[];
+}
+
+interface IGetGenresProps {
+  type: string;
+}
+
+export const getGenres = async ({ type }: IGetGenresProps) => {
+  const data = await axios
+    .get(`${BASE_URL}/genre/${type}/list?language=en`, config)
     .then((response) => response.data)
     .catch((e) => {
       throw e;

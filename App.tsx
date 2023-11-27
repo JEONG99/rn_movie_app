@@ -7,6 +7,7 @@ import TvShowPage from "./src/pages/TvShowPage";
 import MoviePage from "./src/pages/MoviePage";
 import { iconNames } from "./src/components/Layout";
 import { RecoilRoot } from "recoil";
+import { StatusBar } from "expo-status-bar";
 
 const MovieStack = createNativeStackNavigator();
 
@@ -41,6 +42,7 @@ export default function App() {
   return (
     <RecoilRoot>
       <QueryClientProvider client={queryClient}>
+        <StatusBar style="light" />
         <NavigationContainer>
           <Tab.Navigator
             initialRouteName="Movie"

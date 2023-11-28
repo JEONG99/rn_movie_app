@@ -1,13 +1,10 @@
-import {
-  Dimensions,
-  ImageBackground,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { Dimensions, ImageBackground, View } from "react-native";
 import styled from "styled-components/native";
 import { makeImagePath } from "../utils/makeImagePath";
 import { LinearGradient } from "expo-linear-gradient";
 import { AntDesign } from "@expo/vector-icons";
+import { useNavigation } from "@react-navigation/native";
+import { HomePageProps } from "../../App";
 
 const WIDTH = Dimensions.get("window").width;
 const IMAGE_RATIO = WIDTH / 500;
@@ -56,6 +53,11 @@ const DetailLayout = ({
   tagLine,
   children,
 }: IDetailLayoutProps) => {
+  const navigation = useNavigation<HomePageProps["navigation"]>();
+  const goBackHome = () => {
+    navigation.goBack();
+  };
+
   return (
     <Wrapper>
       <View
@@ -74,7 +76,7 @@ const DetailLayout = ({
             style={{ flex: 1 }}
           />
         </ImageBackground>
-        <Close>
+        <Close onPress={goBackHome}>
           <AntDesign name="close" size={22} color="white" />
         </Close>
       </View>

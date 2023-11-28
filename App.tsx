@@ -1,5 +1,8 @@
 import { NavigationContainer } from "@react-navigation/native";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import {
+  NativeStackScreenProps,
+  createNativeStackNavigator,
+} from "@react-navigation/native-stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { MaterialIcons } from "@expo/vector-icons";
@@ -8,29 +11,46 @@ import MoviePage from "./src/pages/MoviePage";
 import { iconNames } from "./src/components/Layout";
 import { RecoilRoot } from "recoil";
 import { StatusBar } from "expo-status-bar";
+import MovieDetailPage from "./src/pages/MovieDetailPage";
 
-const MovieStack = createNativeStackNavigator();
+export type StackParamList = {
+  Home: undefined;
+  Detail: { id: number; title: string; imagePath: string };
+};
+export type HomePageProps = NativeStackScreenProps<StackParamList, "Home">;
+
+const MovieStack = createNativeStackNavigator<StackParamList>();
 
 function MovieStackScreen() {
   return (
     <MovieStack.Navigator
-      initialRouteName="Base"
+      initialRouteName="Home"
       screenOptions={{ headerShown: false }}
     >
-      <MovieStack.Screen name="Base" component={MoviePage} />
+      <MovieStack.Group>
+        <MovieStack.Screen name="Home" component={MoviePage} />
+      </MovieStack.Group>
+      <MovieStack.Group screenOptions={{ presentation: "modal" }}>
+        <MovieStack.Screen name="Detail" component={MovieDetailPage} />
+      </MovieStack.Group>
     </MovieStack.Navigator>
   );
 }
 
-const TvShowStack = createNativeStackNavigator();
+const TvShowStack = createNativeStackNavigator<StackParamList>();
 
 function TvShowStackScreen() {
   return (
     <TvShowStack.Navigator
-      initialRouteName="Base"
+      initialRouteName="Home"
       screenOptions={{ headerShown: false }}
     >
-      <TvShowStack.Screen name="Base" component={TvShowPage} />
+      <TvShowStack.Group>
+        <TvShowStack.Screen name="Home" component={TvShowPage} />
+      </TvShowStack.Group>
+      <TvShowStack.Group screenOptions={{ presentation: "modal" }}>
+        <TvShowStack.Screen name="Detail" component={MovieDetailPage} />
+      </TvShowStack.Group>
     </TvShowStack.Navigator>
   );
 }

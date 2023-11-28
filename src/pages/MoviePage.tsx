@@ -27,7 +27,9 @@ const MoviePage = () => {
         ref={scrollRef}
       >
         <Banner
+          id={data?.id}
           path={data?.poster_path || ""}
+          backdropPath={data?.backdrop_path || ""}
           title={data?.title || ""}
           genres={
             data?.genre_ids.map(

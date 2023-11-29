@@ -12,6 +12,8 @@ import { iconNames } from "./src/components/Layout";
 import { RecoilRoot } from "recoil";
 import { StatusBar } from "expo-status-bar";
 import MovieDetailPage from "./src/pages/MovieDetailPage";
+import { ThemeProvider } from "styled-components/native";
+import { theme } from "./theme";
 
 export type StackParamList = {
   Home: undefined;
@@ -60,49 +62,51 @@ const queryClient = new QueryClient();
 
 export default function App() {
   return (
-    <RecoilRoot>
-      <QueryClientProvider client={queryClient}>
-        <StatusBar style="light" />
-        <NavigationContainer>
-          <Tab.Navigator
-            initialRouteName="Movie"
-            screenOptions={({ route }) => ({
-              headerShown: false,
-              tabBarLabelStyle: {
-                fontWeight: "600",
-                fontSize: 12,
-              },
-              tabBarStyle: {
-                height: 90,
-                padding: 10,
-                backgroundColor: "black",
-                borderTopWidth: 0,
-              },
-              tabBarIcon: ({ color, size }) => {
-                let iconName = "movie";
-                if (route.name === "Movie") {
-                  iconName = "movie";
-                } else if (route.name === "Tv Show") {
-                  iconName = "live-tv";
-                }
+    <ThemeProvider theme={theme}>
+      <RecoilRoot>
+        <QueryClientProvider client={queryClient}>
+          <StatusBar style="light" />
+          <NavigationContainer>
+            <Tab.Navigator
+              initialRouteName="Movie"
+              screenOptions={({ route }) => ({
+                headerShown: false,
+                tabBarLabelStyle: {
+                  fontWeight: "600",
+                  fontSize: 12,
+                },
+                tabBarStyle: {
+                  height: 90,
+                  padding: 10,
+                  backgroundColor: "black",
+                  borderTopWidth: 0,
+                },
+                tabBarIcon: ({ color, size }) => {
+                  let iconName = "movie";
+                  if (route.name === "Movie") {
+                    iconName = "movie";
+                  } else if (route.name === "Tv Show") {
+                    iconName = "live-tv";
+                  }
 
-                return (
-                  <MaterialIcons
-                    name={iconName as iconNames}
-                    size={size}
-                    color={color}
-                  />
-                );
-              },
-              tabBarActiveTintColor: "white",
-              tabBarInactiveTintColor: "rgba(255,255,255,0.3)",
-            })}
-          >
-            <Tab.Screen name="Movie" component={MovieStackScreen} />
-            <Tab.Screen name="Tv Show" component={TvShowStackScreen} />
-          </Tab.Navigator>
-        </NavigationContainer>
-      </QueryClientProvider>
-    </RecoilRoot>
+                  return (
+                    <MaterialIcons
+                      name={iconName as iconNames}
+                      size={size}
+                      color={color}
+                    />
+                  );
+                },
+                tabBarActiveTintColor: "white",
+                tabBarInactiveTintColor: "rgba(255,255,255,0.3)",
+              })}
+            >
+              <Tab.Screen name="Movie" component={MovieStackScreen} />
+              <Tab.Screen name="Tv Show" component={TvShowStackScreen} />
+            </Tab.Navigator>
+          </NavigationContainer>
+        </QueryClientProvider>
+      </RecoilRoot>
+    </ThemeProvider>
   );
 }

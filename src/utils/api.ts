@@ -260,3 +260,39 @@ export const getMovieDetail = async ({ id }: IGetDetailProps) => {
     });
   return data;
 };
+
+interface IGetCreditsProps {
+  id: number;
+}
+
+export interface IGetCreditsResult {
+  id: number;
+  cast: {
+    gender: number;
+    id: number;
+    name: string;
+    original_name: string;
+    profile_path: string;
+    character: string;
+    order: number;
+  }[];
+  crew: {
+    gender: number;
+    id: number;
+    name: string;
+    original_name: string;
+    profile_path: string;
+    department: string;
+    job: string;
+  }[];
+}
+
+export const getMovieCredits = async ({ id }: IGetCreditsProps) => {
+  const data = await axios
+    .get(`${BASE_URL}/movie/${id}/credits?language=en-US`, config)
+    .then((response) => response.data)
+    .catch((e) => {
+      throw e;
+    });
+  return data;
+};

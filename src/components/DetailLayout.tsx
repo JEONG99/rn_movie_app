@@ -36,8 +36,8 @@ const Title = styled.Text`
   color: white;
 `;
 const TagLine = styled.Text`
-  font-size: 20px;
-  color: rgb(186, 186, 186);
+  font-size: 18px;
+  color: ${(props) => props.theme.gray.dark};
 `;
 
 interface IDetailLayoutProps {

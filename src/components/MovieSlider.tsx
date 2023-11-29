@@ -1,11 +1,13 @@
 import styled from "styled-components/native";
 import { useQuery } from "@tanstack/react-query";
-import { useRef } from "react";
+import { useRef, useEffect } from "react";
 import { ScrollView, ActivityIndicator } from "react-native";
 import { IGetMoviesResult, getMovies, movieCategories } from "../utils/api";
 import Thumbnail from "./Thumbnail";
 import { useNavigation } from "@react-navigation/native";
 import { MoviePageProps } from "../pages/MoviePage";
+import { useRecoilValue } from "recoil";
+import { tabRouteNameAtom } from "../utils/atom";
 
 const Container = styled.View<{ $last: boolean }>`
   margin-top: 20px;
@@ -33,6 +35,7 @@ interface ISliderProps {
 }
 
 const MovieSlider = ({ category, last = false }: ISliderProps) => {
+  const tabRouteName = useRecoilValue(tabRouteNameAtom);
   const navigation = useNavigation<MoviePageProps["navigation"]>();
   const scrollRef = useRef<ScrollView | null>(null);
   const { data, isLoading } = useQuery<IGetMoviesResult>({
@@ -48,6 +51,10 @@ const MovieSlider = ({ category, last = false }: ISliderProps) => {
       imagePath,
     });
   };
+
+  useEffect(() => {
+    scrollRef.current?.scrollTo({ y: 0 });
+  }, [tabRouteName]);
 
   return (
     <Container $last={last}>

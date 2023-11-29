@@ -1,11 +1,11 @@
 import { ScrollView } from "react-native";
+import { useEffect, useState } from "react";
 import Layout from "../components/Layout";
 import TvShowSlider from "../components/TvShowSlider";
 import useScroll from "../hooks/useScroll";
 import { useQuery } from "@tanstack/react-query";
 import { IGetTvShowsResult, ITvShow, getTvShows } from "../utils/api";
 import Banner from "../components/Banner";
-import { AxiosError } from "axios";
 import useGenres from "../hooks/useGenres";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { TvShowStackParamList } from "../../App";
@@ -16,24 +16,30 @@ export type TvShowPageProps = NativeStackScreenProps<
 >;
 
 const TvShowPage = ({ navigation }: TvShowPageProps) => {
+  const [bannerTvShow, setBannerTvShow] = useState<ITvShow | null>(null);
   const { scrollEventThrottle, onScroll, scrollRef } = useScroll();
-  const { data, isLoading } = useQuery<IGetTvShowsResult, AxiosError, ITvShow>({
+  const { data, isLoading } = useQuery<IGetTvShowsResult>({
     queryKey: ["tv", "airing_today"],
     queryFn: () => getTvShows({ category: "airing_today" }),
     refetchOnWindowFocus: false,
-    select: (data) =>
-      data.results[Math.floor(Math.random() * data.results.length)],
   });
   const genresResult = useGenres({ type: "tv" });
 
   const goDetailPage = () => {
-    if (!data?.id) return;
+    if (!bannerTvShow?.id) return;
     navigation.navigate("Detail", {
-      id: data.id,
-      title: data.name,
-      imagePath: data.backdrop_path,
+      id: bannerTvShow.id,
+      title: bannerTvShow.name,
+      imagePath: bannerTvShow.backdrop_path,
     });
   };
+
+  useEffect(() => {
+    if (!data) return;
+    setBannerTvShow(
+      data.results[Math.floor(Math.random() * data.results.length)]
+    );
+  }, [data]);
 
   return (
     <Layout title="Tv Show">
@@ -43,10 +49,10 @@ const TvShowPage = ({ navigation }: TvShowPageProps) => {
         ref={scrollRef}
       >
         <Banner
-          path={data?.poster_path || ""}
-          title={data?.name || ""}
+          path={bannerTvShow?.poster_path || ""}
+          title={bannerTvShow?.name || ""}
           genres={
-            data?.genre_ids.map(
+            bannerTvShow?.genre_ids.map(
               (id) =>
                 genresResult.genres.find((genre) => genre.id === id)?.name || ""
             ) || []

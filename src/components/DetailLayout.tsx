@@ -3,8 +3,6 @@ import styled from "styled-components/native";
 import { makeImagePath } from "../utils/makeImagePath";
 import { LinearGradient } from "expo-linear-gradient";
 import { AntDesign } from "@expo/vector-icons";
-import { useNavigation } from "@react-navigation/native";
-import { HomePageProps } from "../../App";
 
 const WIDTH = Dimensions.get("window").width;
 const IMAGE_RATIO = WIDTH / 500;
@@ -45,6 +43,7 @@ interface IDetailLayoutProps {
   title: string;
   tagLine: string | undefined;
   children: any;
+  goBackHome: () => void;
 }
 
 const DetailLayout = ({
@@ -52,12 +51,8 @@ const DetailLayout = ({
   title,
   tagLine,
   children,
+  goBackHome,
 }: IDetailLayoutProps) => {
-  const navigation = useNavigation<HomePageProps["navigation"]>();
-  const goBackHome = () => {
-    navigation.goBack();
-  };
-
   return (
     <Wrapper>
       <View

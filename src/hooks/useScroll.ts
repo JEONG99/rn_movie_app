@@ -1,17 +1,17 @@
-import { useRef } from "react";
+import { useRef, useEffect } from "react";
 import {
   NativeScrollEvent,
   NativeSyntheticEvent,
   ScrollView,
 } from "react-native";
-import { useSetRecoilState } from "recoil";
-import { headerBackgroundShowAtom } from "../utils/atom";
-import { useFocusEffect } from "@react-navigation/native";
+import { useRecoilValue, useSetRecoilState } from "recoil";
+import { headerBackgroundShowAtom, tabRouteNameAtom } from "../utils/atom";
 
 const useScroll = () => {
   const scrollEventThrottle = 30;
   const scrollRef = useRef<ScrollView | null>(null);
   const setHeaderBackgroundShow = useSetRecoilState(headerBackgroundShowAtom);
+  const tabRouteName = useRecoilValue(tabRouteNameAtom);
 
   const onScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
     const scroll = event.nativeEvent.contentOffset.y;
@@ -22,11 +22,9 @@ const useScroll = () => {
     }
   };
 
-  useFocusEffect(() => {
-    return () => {
-      scrollRef.current?.scrollTo({ y: 0 });
-    };
-  });
+  useEffect(() => {
+    scrollRef.current?.scrollTo({ y: 0 });
+  }, [tabRouteName]);
 
   return { scrollEventThrottle, onScroll, scrollRef };
 };

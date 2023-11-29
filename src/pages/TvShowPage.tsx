@@ -7,8 +7,15 @@ import { IGetTvShowsResult, ITvShow, getTvShows } from "../utils/api";
 import Banner from "../components/Banner";
 import { AxiosError } from "axios";
 import useGenres from "../hooks/useGenres";
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import { TvShowStackParamList } from "../../App";
 
-const TvShowPage = () => {
+export type TvShowPageProps = NativeStackScreenProps<
+  TvShowStackParamList,
+  "TvShowHome"
+>;
+
+const TvShowPage = ({ navigation }: TvShowPageProps) => {
   const { scrollEventThrottle, onScroll, scrollRef } = useScroll();
   const { data, isLoading } = useQuery<IGetTvShowsResult, AxiosError, ITvShow>({
     queryKey: ["tv", "airing_today"],
@@ -19,6 +26,15 @@ const TvShowPage = () => {
   });
   const genresResult = useGenres({ type: "tv" });
 
+  const goDetailPage = () => {
+    if (!data?.id) return;
+    navigation.navigate("Detail", {
+      id: data.id,
+      title: data.name,
+      imagePath: data.backdrop_path,
+    });
+  };
+
   return (
     <Layout title="Tv Show">
       <ScrollView
@@ -27,9 +43,7 @@ const TvShowPage = () => {
         ref={scrollRef}
       >
         <Banner
-          id={data?.id}
           path={data?.poster_path || ""}
-          backdropPath={data?.backdrop_path || ""}
           title={data?.name || ""}
           genres={
             data?.genre_ids.map(
@@ -38,6 +52,7 @@ const TvShowPage = () => {
             ) || []
           }
           isLoading={isLoading}
+          goDetailPage={goDetailPage}
         />
         <TvShowSlider
           category={{ key: "airing_today", name: "Airing Today" }}

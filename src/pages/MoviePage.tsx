@@ -7,8 +7,15 @@ import useScroll from "../hooks/useScroll";
 import Banner from "../components/Banner";
 import { AxiosError } from "axios";
 import useGenres from "../hooks/useGenres";
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import { MovieStackParamList } from "../../App";
 
-const MoviePage = () => {
+export type MoviePageProps = NativeStackScreenProps<
+  MovieStackParamList,
+  "MovieHome"
+>;
+
+const MoviePage = ({ navigation }: MoviePageProps) => {
   const { scrollEventThrottle, onScroll, scrollRef } = useScroll();
   const { data, isLoading } = useQuery<IGetMoviesResult, AxiosError, IMovie>({
     queryKey: ["movie", "now_playing"],
@@ -19,6 +26,15 @@ const MoviePage = () => {
   });
   const genresResult = useGenres({ type: "movie" });
 
+  const goDetailPage = () => {
+    if (!data?.id) return;
+    navigation.navigate("Detail", {
+      id: data.id,
+      title: data.title,
+      imagePath: data.backdrop_path,
+    });
+  };
+
   return (
     <Layout title="Movie">
       <ScrollView
@@ -27,9 +43,7 @@ const MoviePage = () => {
         ref={scrollRef}
       >
         <Banner
-          id={data?.id}
           path={data?.poster_path || ""}
-          backdropPath={data?.backdrop_path || ""}
           title={data?.title || ""}
           genres={
             data?.genre_ids.map(
@@ -38,6 +52,7 @@ const MoviePage = () => {
             ) || []
           }
           isLoading={isLoading}
+          goDetailPage={goDetailPage}
         />
         <MovieSlider category={{ key: "now_playing", name: "Now Playing" }} />
         <MovieSlider category={{ key: "popular", name: "Popular" }} />

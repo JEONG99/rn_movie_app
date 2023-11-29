@@ -15,22 +15,20 @@ import MovieDetailPage from "./src/pages/MovieDetailPage";
 import { ThemeProvider } from "styled-components/native";
 import { theme } from "./theme";
 
-export type StackParamList = {
-  Home: undefined;
+export type MovieStackParamList = {
+  MovieHome: undefined;
   Detail: { id: number; title: string; imagePath: string };
 };
-export type HomePageProps = NativeStackScreenProps<StackParamList, "Home">;
-
-const MovieStack = createNativeStackNavigator<StackParamList>();
+const MovieStack = createNativeStackNavigator<MovieStackParamList>();
 
 function MovieStackScreen() {
   return (
     <MovieStack.Navigator
-      initialRouteName="Home"
+      initialRouteName="MovieHome"
       screenOptions={{ headerShown: false }}
     >
       <MovieStack.Group>
-        <MovieStack.Screen name="Home" component={MoviePage} />
+        <MovieStack.Screen name="MovieHome" component={MoviePage} />
       </MovieStack.Group>
       <MovieStack.Group screenOptions={{ presentation: "modal" }}>
         <MovieStack.Screen name="Detail" component={MovieDetailPage} />
@@ -39,16 +37,21 @@ function MovieStackScreen() {
   );
 }
 
-const TvShowStack = createNativeStackNavigator<StackParamList>();
+export type TvShowStackParamList = {
+  TvShowHome: undefined;
+  Detail: { id: number; title: string; imagePath: string };
+};
+
+const TvShowStack = createNativeStackNavigator<TvShowStackParamList>();
 
 function TvShowStackScreen() {
   return (
     <TvShowStack.Navigator
-      initialRouteName="Home"
+      initialRouteName="TvShowHome"
       screenOptions={{ headerShown: false }}
     >
       <TvShowStack.Group>
-        <TvShowStack.Screen name="Home" component={TvShowPage} />
+        <TvShowStack.Screen name="TvShowHome" component={TvShowPage} />
       </TvShowStack.Group>
       <TvShowStack.Group screenOptions={{ presentation: "modal" }}>
         <TvShowStack.Screen name="Detail" component={MovieDetailPage} />

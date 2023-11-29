@@ -3,8 +3,6 @@ import { ActivityIndicator, TouchableOpacity } from "react-native";
 import { makeImagePath } from "../utils/makeImagePath";
 import { LinearGradient } from "expo-linear-gradient";
 import { Feather } from "@expo/vector-icons";
-import { useNavigation } from "@react-navigation/native";
-import { HomePageProps } from "../../App";
 
 const Wrapper = styled.View`
   position: relative;
@@ -55,32 +53,20 @@ const IconText = styled.Text`
 `;
 
 interface IBannerProps {
-  id: number | undefined;
   path: string;
-  backdropPath: string;
   title: string;
   genres: string[];
   isLoading: boolean;
+  goDetailPage: () => void;
 }
 
 const Banner = ({
-  id,
   path,
-  backdropPath,
   title,
   genres,
   isLoading,
+  goDetailPage,
 }: IBannerProps) => {
-  const navigation = useNavigation<HomePageProps["navigation"]>();
-  const goDetailPage = () => {
-    if (id === undefined) return;
-    navigation.navigate("Detail", {
-      id,
-      title,
-      imagePath: backdropPath,
-    });
-  };
-
   return (
     <Wrapper>
       {isLoading ? (

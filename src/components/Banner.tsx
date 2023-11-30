@@ -11,6 +11,7 @@ const Wrapper = styled.View`
 `;
 const ImageBG = styled.ImageBackground`
   height: 500px;
+  background-color: ${(props) => props.theme.gray.dark};
 `;
 const ItemWrapper = styled.View`
   position: absolute;

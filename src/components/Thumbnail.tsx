@@ -4,7 +4,7 @@ import { makeImagePath } from "../utils/makeImagePath";
 
 const Wrapper = styled.View`
   margin-right: 8px;
-  background-color: white;
+  background-color: ${(props) => props.theme.gray.dark};
   border-radius: 5px;
   overflow: hidden;
 `;

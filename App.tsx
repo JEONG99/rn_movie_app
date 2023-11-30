@@ -12,6 +12,7 @@ import MovieDetailPage from "./src/pages/MovieDetailPage";
 import { ThemeProvider } from "styled-components/native";
 import { theme } from "./theme";
 import { tabRouteNameAtom } from "./src/utils/atom";
+import TvShowDetailPage from "./src/pages/TvShowDetailPage";
 
 export type MovieStackParamList = {
   MovieHome: undefined;
@@ -52,7 +53,7 @@ function TvShowStackScreen() {
         <TvShowStack.Screen name="TvShowHome" component={TvShowPage} />
       </TvShowStack.Group>
       <TvShowStack.Group screenOptions={{ presentation: "modal" }}>
-        <TvShowStack.Screen name="Detail" component={MovieDetailPage} />
+        <TvShowStack.Screen name="Detail" component={TvShowDetailPage} />
       </TvShowStack.Group>
     </TvShowStack.Navigator>
   );

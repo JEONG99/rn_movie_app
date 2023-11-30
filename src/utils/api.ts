@@ -158,7 +158,17 @@ export interface IGetMovieDetailResult {
   vote_count: number;
 }
 
-export interface IGetTvDetailResult {
+export const getMovieDetail = async ({ id }: IGetDetailProps) => {
+  const data = await axios
+    .get(`${BASE_URL}/movie/${id}?language=en-US`, config)
+    .then((response) => response.data)
+    .catch((e) => {
+      throw e;
+    });
+  return data;
+};
+
+export interface IGetTvShowDetailResult {
   adult: boolean;
   backdrop_path: string;
   created_by: string[];
@@ -168,7 +178,6 @@ export interface IGetTvDetailResult {
     id: number;
     name: string;
   }[];
-
   homepage: string;
   id: number;
   in_production: boolean;
@@ -251,9 +260,9 @@ export interface IGetTvDetailResult {
   vote_count: number;
 }
 
-export const getMovieDetail = async ({ id }: IGetDetailProps) => {
+export const getTvShowDetail = async ({ id }: IGetDetailProps) => {
   const data = await axios
-    .get(`${BASE_URL}/movie/${id}?language=en-US`, config)
+    .get(`${BASE_URL}/tv/${id}?language=en-US`, config)
     .then((response) => response.data)
     .catch((e) => {
       throw e;
@@ -290,6 +299,89 @@ export interface IGetCreditsResult {
 export const getMovieCredits = async ({ id }: IGetCreditsProps) => {
   const data = await axios
     .get(`${BASE_URL}/movie/${id}/credits?language=en-US`, config)
+    .then((response) => response.data)
+    .catch((e) => {
+      throw e;
+    });
+  return data;
+};
+
+export const getTvCredits = async ({ id }: IGetCreditsProps) => {
+  const data = await axios
+    .get(`${BASE_URL}/tv/${id}/credits?language=en-US`, config)
+    .then((response) => response.data)
+    .catch((e) => {
+      throw e;
+    });
+  return data;
+};
+
+export interface IGetTvSeasonDetailResult {
+  _id: string;
+  air_date: string;
+  episodes: {
+    air_date: string;
+    episode_number: number;
+    episode_type: string;
+    id: number;
+    name: string;
+    overview: string;
+    production_code: string;
+    runtime: number;
+    season_number: number;
+    show_id: number;
+    still_path: string;
+    vote_average: number;
+    vote_count: number;
+    crew: {
+      department: string;
+      job: string;
+      credit_id: string;
+      adult: boolean;
+      gender: number;
+      id: number;
+      known_for_department: string;
+      name: string;
+      original_name: string;
+      popularity: number;
+      profile_path: string;
+    }[];
+    guest_stars: {
+      character: string;
+      credit_id: string;
+      order: number;
+      adult: boolean;
+      gender: number;
+      id: number;
+      known_for_department: string;
+      name: string;
+      original_name: string;
+      popularity: number;
+      profile_path: string;
+    }[];
+  }[];
+  name: string;
+  overview: string;
+  id: number;
+  poster_path: string;
+  season_number: number;
+  vote_average: number;
+}
+
+interface IGetTvSeasonDetailProps {
+  tvShowId: number;
+  seasonNumber: number;
+}
+
+export const getTvSeasonDetail = async ({
+  tvShowId,
+  seasonNumber,
+}: IGetTvSeasonDetailProps) => {
+  const data = await axios
+    .get(
+      `${BASE_URL}/tv/${tvShowId}/season/${seasonNumber}?language=en-US`,
+      config
+    )
     .then((response) => response.data)
     .catch((e) => {
       throw e;

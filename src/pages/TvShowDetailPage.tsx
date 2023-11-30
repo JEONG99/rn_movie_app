@@ -1,21 +1,25 @@
+import { useState, useEffect } from "react";
+import { ScrollView, TouchableOpacity } from "react-native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import { TvShowStackParamList } from "../../App";
 import { useQuery } from "@tanstack/react-query";
 import {
   IGetCreditsResult,
-  IGetMovieDetailResult,
-  getMovieCredits,
-  getMovieDetail,
+  IGetTvSeasonDetailResult,
+  IGetTvShowDetailResult,
+  getTvCredits,
+  getTvSeasonDetail,
+  getTvShowDetail,
 } from "../utils/api";
-import DetailLayout from "../components/DetailLayout";
-import styled from "styled-components/native";
-import { FontAwesome } from "@expo/vector-icons";
-import { StarRatingDisplay } from "react-native-star-rating-widget";
 import useGenres from "../hooks/useGenres";
-import { useEffect, useState } from "react";
-import { TouchableOpacity, View } from "react-native";
-import { Feather } from "@expo/vector-icons";
+import DetailLayout from "../components/DetailLayout";
 import Loader from "../components/Loader";
-import { MovieStackParamList } from "../../App";
+import styled from "styled-components/native";
+import { StarRatingDisplay } from "react-native-star-rating-widget";
+import { FontAwesome } from "@expo/vector-icons";
+import { Feather } from "@expo/vector-icons";
+import TvShowSeason from "../components/TvShowSeason";
+import Episode from "../components/Episode";
 
 const YearStarBox = styled.View`
   margin-top: 7px;
@@ -28,11 +32,6 @@ const Bullet = styled.View`
   height: 4px;
   border-radius: 50%;
   background-color: ${(props) => props.theme.gray.dark};
-`;
-const RuntimeText = styled.Text`
-  font-size: 18px;
-  font-weight: 600;
-  color: ${(props) => props.theme.gray.light};
 `;
 const Year = styled.View`
   margin-top: 2px;
@@ -80,30 +79,55 @@ const IconText = styled.Text`
   font-size: 12px;
   font-weight: 400;
 `;
-const Overview = styled.Text`
-  font-size: 16px;
+
+const Episodes = styled.View`
+  margin-top: 30px;
+  margin-bottom: 30px;
+`;
+const EpisodesTitle = styled.Text`
+  font-size: 18px;
   font-weight: 500;
-  color: ${(props) => props.theme.gray.light};
+  color: ${(props) => props.theme.gray.dark};
 `;
 
-type DetailPageProps = NativeStackScreenProps<MovieStackParamList, "Detail">;
+type DetailPageProps = NativeStackScreenProps<TvShowStackParamList, "Detail">;
 
-const MovieDetailPage = ({ navigation, route }: DetailPageProps) => {
+export interface ISelectSeason {
+  tvShowId: number;
+  seasonNumber: number;
+  name: string;
+}
+
+const TvShowDetailPage = ({ navigation, route }: DetailPageProps) => {
   const { id, title, imagePath } = route.params;
   const { data: detail, isLoading: detailLoading } =
-    useQuery<IGetMovieDetailResult>({
-      queryKey: ["movie", "detail", id],
-      queryFn: () => getMovieDetail({ id }),
-      refetchOnWindowFocus: false,
+    useQuery<IGetTvShowDetailResult>({
+      queryKey: ["tv", "detail", id],
+      queryFn: () => getTvShowDetail({ id }),
+      staleTime: Infinity,
     });
   const { data: credits, isLoading: creditsLoading } =
     useQuery<IGetCreditsResult>({
-      queryKey: ["movie", "credits", id],
-      queryFn: () => getMovieCredits({ id }),
+      queryKey: ["tv", "credits", id],
+      queryFn: () => getTvCredits({ id }),
       refetchOnReconnect: false,
     });
-  const genresResult = useGenres({ type: "movie" });
+  const genresResult = useGenres({ type: "tv" });
   const [genres, setGenres] = useState<string[]>([]);
+  const [selectSeason, setSelectSeason] = useState<ISelectSeason | null>(null);
+  const {
+    data: seasonDetail,
+    isLoading: seasonDetailLoading,
+    refetch: seasonDetailRefetch,
+  } = useQuery<IGetTvSeasonDetailResult>({
+    queryKey: ["tv", "seasonDetail", id, selectSeason?.seasonNumber],
+    queryFn: () =>
+      getTvSeasonDetail({
+        tvShowId: id,
+        seasonNumber: selectSeason?.seasonNumber || 1,
+      }),
+    enabled: false,
+  });
 
   useEffect(() => {
     if (!detail) return;
@@ -115,6 +139,25 @@ const MovieDetailPage = ({ navigation, route }: DetailPageProps) => {
       ) || []
     );
   }, [detail]);
+
+  useEffect(() => {
+    if (!detail) return;
+    const initialSeason = detail.seasons[0];
+    setSelectSeason({
+      tvShowId: id,
+      seasonNumber: initialSeason.season_number,
+      name: initialSeason.name,
+    });
+  }, [detail]);
+
+  useEffect(() => {
+    if (!selectSeason) return;
+    seasonDetailRefetch();
+  }, [selectSeason]);
+
+  const changeSeason = (newSeason: ISelectSeason) => {
+    setSelectSeason(newSeason);
+  };
 
   const goBackHome = () => {
     navigation.goBack();
@@ -131,13 +174,11 @@ const MovieDetailPage = ({ navigation, route }: DetailPageProps) => {
       {isLoading ? (
         <Loader size="large" />
       ) : (
-        <View style={{ paddingLeft: 5, paddingRight: 5 }}>
+        <ScrollView style={{ paddingLeft: 5, paddingRight: 5 }}>
           <YearStarBox>
             <Year>
-              <YearText>{detail?.release_date.slice(0, 4)}</YearText>
+              <YearText>{detail?.first_air_date.slice(0, 4)}</YearText>
             </Year>
-            <Bullet />
-            <RuntimeText>{detail?.runtime}Minutes</RuntimeText>
             <Bullet />
             <StarRatingDisplay
               starSize={20}
@@ -191,11 +232,42 @@ const MovieDetailPage = ({ navigation, route }: DetailPageProps) => {
               </Icon>
             </TouchableOpacity>
           </IconsBlock>
-          <Overview>{detail?.overview}</Overview>
-        </View>
+          <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+            {detail?.seasons.map((season) => (
+              <TvShowSeason
+                key={season.id}
+                tvShowId={id}
+                seasonNumber={season.season_number}
+                imagePath={season.poster_path}
+                name={season.name}
+                changeSeason={changeSeason}
+                select={selectSeason?.seasonNumber === season.season_number}
+              />
+            ))}
+          </ScrollView>
+          <Episodes>
+            <EpisodesTitle numberOfLines={2}>
+              {title} - {selectSeason?.name}
+            </EpisodesTitle>
+            {seasonDetailLoading ? (
+              <Loader size="small" />
+            ) : (
+              seasonDetail?.episodes.map((episode) => (
+                <Episode
+                  key={episode.id}
+                  episodeNumber={episode.episode_number}
+                  title={episode.name}
+                  runtime={episode.runtime}
+                  overview={episode.overview}
+                  imagePath={episode.still_path}
+                />
+              ))
+            )}
+          </Episodes>
+        </ScrollView>
       )}
     </DetailLayout>
   );
 };
 
-export default MovieDetailPage;
+export default TvShowDetailPage;

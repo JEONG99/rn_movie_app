@@ -25,6 +25,7 @@ const Close = styled.TouchableOpacity`
 `;
 const TextBox = styled.View`
   margin-top: -20px;
+  margin-bottom: 5px;
   gap: 2px;
 `;
 const Title = styled.Text`

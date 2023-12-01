@@ -15,7 +15,7 @@ import { useEffect, useState } from "react";
 import { TouchableOpacity, View } from "react-native";
 import { Feather } from "@expo/vector-icons";
 import Loader from "../components/Loader";
-import { MovieStackParamList } from "../../App";
+import { MovieStackParamList, SearchStackParamList } from "../../App";
 
 const YearStarBox = styled.View`
   margin-top: 7px;
@@ -86,7 +86,9 @@ const Overview = styled.Text`
   color: ${(props) => props.theme.gray.light};
 `;
 
-type DetailPageProps = NativeStackScreenProps<MovieStackParamList, "Detail">;
+type DetailPageProps =
+  | NativeStackScreenProps<MovieStackParamList, "Detail">
+  | NativeStackScreenProps<SearchStackParamList, "MovieDetail">;
 
 const MovieDetailPage = ({ navigation, route }: DetailPageProps) => {
   const { id, title, imagePath } = route.params;

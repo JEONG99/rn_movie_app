@@ -4,15 +4,17 @@ import { makeImagePath } from "../utils/makeImagePath";
 import { ISelectSeason } from "../pages/TvShowDetailPage";
 
 const Wrapper = styled.View`
-  margin-right: 20px;
+  margin-right: 15px;
 `;
 const Title = styled.Text`
-  width: 110px;
+  width: 115px;
   font-size: 26px;
   font-weight: 600;
   color: white;
 `;
 const Thumbnail = styled.View`
+  justify-content: center;
+  align-items: center;
   margin-top: 2px;
   width: 100px;
   height: 150px;
@@ -30,6 +32,10 @@ const SelectBar = styled.View<{ $select: boolean }>`
   height: 4px;
   border-radius: 3px;
   background-color: ${(props) => (props.$select ? "#e21114" : "black")};
+`;
+const EmptyLogo = styled.Image`
+  width: 42px;
+  height: 42px;
 `;
 
 interface ITvShowSeasonProps {
@@ -58,7 +64,13 @@ const TvShowSeason = ({
         <SelectBar $select={select} />
         <Title numberOfLines={1}>{name}</Title>
         <Thumbnail>
-          <ThumbnailImage source={{ uri: makeImagePath(imagePath, "w200") }} />
+          {imagePath ? (
+            <ThumbnailImage
+              source={{ uri: makeImagePath(imagePath, "w200") }}
+            />
+          ) : (
+            <EmptyLogo source={require("../assets/images/netflix_logo.png")} />
+          )}
         </Thumbnail>
       </Wrapper>
     </TouchableOpacity>

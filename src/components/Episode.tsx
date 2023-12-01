@@ -4,7 +4,7 @@ import { useState } from "react";
 import { TouchableOpacity } from "react-native";
 
 const Wrapper = styled.View`
-  margin: 18px 0;
+  margin: 10px 0;
   gap: 8px;
   padding: 0 5px;
 `;
@@ -12,6 +12,8 @@ const ImageTitleBlock = styled.View`
   flex-direction: row;
 `;
 const Thumbnail = styled.View`
+  justify-content: center;
+  align-items: center;
   width: 140px;
   height: 80px;
   border-radius: 10px;
@@ -43,6 +45,10 @@ const Overview = styled.Text`
   line-height: 15px;
   color: ${(props) => props.theme.gray.dark};
 `;
+const EmptyLogo = styled.Image`
+  width: 32px;
+  height: 32px;
+`;
 
 interface IEpisodeProps {
   episodeNumber: number;
@@ -65,7 +71,13 @@ const Episode = ({
     <Wrapper>
       <ImageTitleBlock>
         <Thumbnail>
-          <ThumbnailImage source={{ uri: makeImagePath(imagePath, "w200") }} />
+          {imagePath ? (
+            <ThumbnailImage
+              source={{ uri: makeImagePath(imagePath, "w200") }}
+            />
+          ) : (
+            <EmptyLogo source={require("../assets/images/netflix_logo.png")} />
+          )}
         </Thumbnail>
         <TitleBox>
           <Title>

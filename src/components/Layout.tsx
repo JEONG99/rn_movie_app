@@ -34,13 +34,14 @@ const BannerShadow = styled(AnimatedLinearGradient)`
   height: 200px;
 `;
 
-export type iconNames = "movie" | "live-tv";
+export type iconNames = "movie" | "live-tv" | "search";
 
 const icons: {
   [key: string]: iconNames;
 } = {
   Movie: "movie",
   "Tv Show": "live-tv",
+  Search: "search",
 };
 
 interface ILayoutProps {
@@ -78,10 +79,12 @@ const Layout = ({ children, title }: ILayoutProps) => {
 
   return (
     <Container>
-      <BannerShadow
-        colors={["rgba(0,0,0,1)", "rgba(0,0,0,0)"]}
-        style={{ opacity: fadeAnim }}
-      />
+      {title === "Movie" || title === "Tv Show" ? (
+        <BannerShadow
+          colors={["rgba(0,0,0,1)", "rgba(0,0,0,0)"]}
+          style={{ opacity: fadeAnim }}
+        />
+      ) : null}
       <Header
         $show={showBackground}
         style={{

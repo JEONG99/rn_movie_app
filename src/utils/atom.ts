@@ -9,3 +9,8 @@ export const tabRouteNameAtom = atom<string>({
   key: "tabRouteName",
   default: "",
 });
+
+export const searchQueryAtom = atom<string>({
+  key: "searchQuery",
+  default: "",
+});

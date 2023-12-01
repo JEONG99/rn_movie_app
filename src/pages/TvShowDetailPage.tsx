@@ -1,7 +1,12 @@
 import { useState, useEffect } from "react";
-import { ScrollView, TouchableOpacity } from "react-native";
+import {
+  ActivityIndicator,
+  ScrollView,
+  TouchableOpacity,
+  Text,
+} from "react-native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { TvShowStackParamList } from "../../App";
+import { SearchStackParamList, TvShowStackParamList } from "../../App";
 import { useQuery } from "@tanstack/react-query";
 import {
   IGetCreditsResult,
@@ -20,6 +25,8 @@ import { FontAwesome } from "@expo/vector-icons";
 import { Feather } from "@expo/vector-icons";
 import TvShowSeason from "../components/TvShowSeason";
 import Episode from "../components/Episode";
+import { FontAwesome5 } from "@expo/vector-icons";
+import { theme } from "../../theme";
 
 const YearStarBox = styled.View`
   margin-top: 7px;
@@ -89,8 +96,21 @@ const EpisodesTitle = styled.Text`
   font-weight: 500;
   color: ${(props) => props.theme.gray.dark};
 `;
+const EpisodesLoader = styled.View`
+  justify-content: center;
+  height: 100px;
+`;
+const EmptyEpisodesText = styled.Text`
+  margin-top: 30px;
+  align-self: center;
+  font-size: 22px;
+  font-weight: 500;
+  color: ${(props) => props.theme.gray.light};
+`;
 
-type DetailPageProps = NativeStackScreenProps<TvShowStackParamList, "Detail">;
+type DetailPageProps =
+  | NativeStackScreenProps<TvShowStackParamList, "Detail">
+  | NativeStackScreenProps<SearchStackParamList, "TvShowDetail">;
 
 export interface ISelectSeason {
   tvShowId: number;
@@ -250,7 +270,18 @@ const TvShowDetailPage = ({ navigation, route }: DetailPageProps) => {
               {title} - {selectSeason?.name}
             </EpisodesTitle>
             {seasonDetailLoading ? (
-              <Loader size="small" />
+              <EpisodesLoader>
+                <ActivityIndicator size="small" />
+              </EpisodesLoader>
+            ) : seasonDetail?.episodes.length === 0 ? (
+              <EmptyEpisodesText>
+                The list is empty.{" "}
+                <FontAwesome5
+                  name="sad-tear"
+                  size={24}
+                  color={theme.gray.light}
+                />
+              </EmptyEpisodesText>
             ) : (
               seasonDetail?.episodes.map((episode) => (
                 <Episode

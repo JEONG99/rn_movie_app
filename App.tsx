@@ -11,8 +11,9 @@ import { StatusBar } from "expo-status-bar";
 import MovieDetailPage from "./src/pages/MovieDetailPage";
 import { ThemeProvider } from "styled-components/native";
 import { theme } from "./theme";
-import { tabRouteNameAtom } from "./src/utils/atom";
+import { searchQueryAtom, tabRouteNameAtom } from "./src/utils/atom";
 import TvShowDetailPage from "./src/pages/TvShowDetailPage";
+import SearchPage from "./src/pages/SearchPage";
 
 export type MovieStackParamList = {
   MovieHome: undefined;
@@ -59,11 +60,37 @@ function TvShowStackScreen() {
   );
 }
 
+export type SearchStackParamList = {
+  SearchHome: undefined;
+  MovieDetail: { id: number; title: string; imagePath: string };
+  TvShowDetail: { id: number; title: string; imagePath: string };
+};
+
+const SearchStack = createNativeStackNavigator<SearchStackParamList>();
+
+function SearchStackScreen() {
+  return (
+    <SearchStack.Navigator
+      initialRouteName="SearchHome"
+      screenOptions={{ headerShown: false }}
+    >
+      <SearchStack.Group>
+        <SearchStack.Screen name="SearchHome" component={SearchPage} />
+      </SearchStack.Group>
+      <SearchStack.Group screenOptions={{ presentation: "modal" }}>
+        <SearchStack.Screen name="MovieDetail" component={MovieDetailPage} />
+        <SearchStack.Screen name="TvShowDetail" component={TvShowDetailPage} />
+      </SearchStack.Group>
+    </SearchStack.Navigator>
+  );
+}
+
 const Tab = createBottomTabNavigator();
 const queryClient = new QueryClient();
 
 const TabNavigator = () => {
   const setTabRouteName = useSetRecoilState(tabRouteNameAtom);
+  const setSearchQuery = useSetRecoilState(searchQueryAtom);
 
   return (
     <Tab.Navigator
@@ -86,6 +113,8 @@ const TabNavigator = () => {
             iconName = "movie";
           } else if (route.name === "Tv Show") {
             iconName = "live-tv";
+          } else if (route.name === "Search") {
+            iconName = "search";
           }
 
           return (
@@ -102,11 +131,13 @@ const TabNavigator = () => {
       screenListeners={{
         tabPress: (e) => {
           setTabRouteName(e.target || "");
+          setSearchQuery("");
         },
       }}
     >
       <Tab.Screen name="Movie" component={MovieStackScreen} />
       <Tab.Screen name="Tv Show" component={TvShowStackScreen} />
+      <Tab.Screen name="Search" component={SearchStackScreen} />
     </Tab.Navigator>
   );
 };

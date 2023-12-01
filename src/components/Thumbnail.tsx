@@ -12,6 +12,10 @@ const ThumbnailImage = styled.Image`
   width: 110px;
   height: 150px;
 `;
+const EmptyLogo = styled.Image`
+  width: 42px;
+  height: 42px;
+`;
 
 interface IThumbnailProps {
   id: number;
@@ -34,7 +38,11 @@ const Thumbnail = ({
       onPress={() => goDetailPage(id, title, backdropPath)}
     >
       <Wrapper>
-        <ThumbnailImage source={{ uri: makeImagePath(imagePath, "w200") }} />
+        {imagePath ? (
+          <ThumbnailImage source={{ uri: makeImagePath(imagePath, "w200") }} />
+        ) : (
+          <EmptyLogo source={require("../assets/images/netflix_logo.png")} />
+        )}
       </Wrapper>
     </TouchableOpacity>
   );

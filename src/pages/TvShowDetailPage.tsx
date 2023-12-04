@@ -64,7 +64,8 @@ const Genres = styled.Text`
   color: ${(props) => props.theme.gray.light};
 `;
 const CastingBox = styled.View`
-  margin: 10px 0;
+  margin-top: 5px;
+  margin-bottom: 12px;
   gap: 2px;
 `;
 const CastingText = styled.Text`
@@ -74,7 +75,6 @@ const CastingText = styled.Text`
 `;
 const IconsBlock = styled.View`
   flex-direction: row;
-  margin-top: 4px;
   margin-bottom: 10px;
 `;
 const Icon = styled.View`
@@ -107,10 +107,35 @@ const EmptyEpisodesText = styled.Text`
   font-weight: 500;
   color: ${(props) => props.theme.gray.light};
 `;
+const Link = styled.View`
+  margin-bottom: 15px;
+  flex-direction: row;
+  align-items: center;
+  gap: 4px;
+`;
+const LinkText = styled.Text`
+  font-size: 14px;
+  font-weight: 400;
+  color: "rgb(0, 100, 194)";
+`;
 
 type DetailPageProps =
   | NativeStackScreenProps<TvShowStackParamList, "Detail">
   | NativeStackScreenProps<SearchStackParamList, "TvShowDetail">;
+
+const isMovieNavigationProp = (
+  navigation: DetailPageProps["navigation"]
+): navigation is NativeStackScreenProps<
+  TvShowStackParamList,
+  "Detail"
+>["navigation"] => {
+  return (
+    (navigation as NativeStackScreenProps<
+      TvShowStackParamList,
+      "Detail"
+    >["navigation"]) !== undefined
+  );
+};
 
 export interface ISelectSeason {
   tvShowId: number;
@@ -183,6 +208,15 @@ const TvShowDetailPage = ({ navigation, route }: DetailPageProps) => {
     navigation.goBack();
   };
 
+  const goWebview = (path: string) => {
+    if (!path) return;
+    if (isMovieNavigationProp(navigation)) {
+      navigation.navigate("Webview", { path });
+    } else {
+      navigation.navigate("Webview", { path });
+    }
+  };
+
   const isLoading = detailLoading || creditsLoading;
   return (
     <DetailLayout
@@ -244,6 +278,12 @@ const TvShowDetailPage = ({ navigation, route }: DetailPageProps) => {
               </CastingText>
             ) : null}
           </CastingBox>
+          <TouchableOpacity onPress={() => goWebview(detail?.homepage || "")}>
+            <Link>
+              <Feather name="link" size={20} color="rgb(0, 100, 194)" />
+              <LinkText>Go Homepage</LinkText>
+            </Link>
+          </TouchableOpacity>
           <IconsBlock>
             <TouchableOpacity>
               <Icon>

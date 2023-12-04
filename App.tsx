@@ -1,5 +1,8 @@
 import { NavigationContainer } from "@react-navigation/native";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import {
+  NativeStackNavigationOptions,
+  createNativeStackNavigator,
+} from "@react-navigation/native-stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { MaterialIcons } from "@expo/vector-icons";
@@ -14,10 +17,26 @@ import { theme } from "./theme";
 import { searchQueryAtom, tabRouteNameAtom } from "./src/utils/atom";
 import TvShowDetailPage from "./src/pages/TvShowDetailPage";
 import SearchPage from "./src/pages/SearchPage";
+import WebviewPage from "./src/pages/WebviewPage";
+
+const webviewHeaderConfig: NativeStackNavigationOptions = {
+  headerBackVisible: false,
+  headerShown: true,
+  headerStyle: {
+    backgroundColor: "black",
+  },
+  headerTintColor: "#ffffff",
+  headerTitleStyle: {
+    fontWeight: "500",
+    fontSize: 14,
+  },
+  presentation: "fullScreenModal",
+};
 
 export type MovieStackParamList = {
   MovieHome: undefined;
   Detail: { id: number; title: string; imagePath: string };
+  Webview: { path: string };
 };
 const MovieStack = createNativeStackNavigator<MovieStackParamList>();
 
@@ -33,6 +52,9 @@ function MovieStackScreen() {
       <MovieStack.Group screenOptions={{ presentation: "modal" }}>
         <MovieStack.Screen name="Detail" component={MovieDetailPage} />
       </MovieStack.Group>
+      <MovieStack.Group screenOptions={webviewHeaderConfig}>
+        <MovieStack.Screen name="Webview" component={WebviewPage} />
+      </MovieStack.Group>
     </MovieStack.Navigator>
   );
 }
@@ -40,6 +62,7 @@ function MovieStackScreen() {
 export type TvShowStackParamList = {
   TvShowHome: undefined;
   Detail: { id: number; title: string; imagePath: string };
+  Webview: { path: string };
 };
 
 const TvShowStack = createNativeStackNavigator<TvShowStackParamList>();
@@ -56,6 +79,9 @@ function TvShowStackScreen() {
       <TvShowStack.Group screenOptions={{ presentation: "modal" }}>
         <TvShowStack.Screen name="Detail" component={TvShowDetailPage} />
       </TvShowStack.Group>
+      <TvShowStack.Group screenOptions={webviewHeaderConfig}>
+        <TvShowStack.Screen name="Webview" component={WebviewPage} />
+      </TvShowStack.Group>
     </TvShowStack.Navigator>
   );
 }
@@ -64,6 +90,7 @@ export type SearchStackParamList = {
   SearchHome: undefined;
   MovieDetail: { id: number; title: string; imagePath: string };
   TvShowDetail: { id: number; title: string; imagePath: string };
+  Webview: { path: string };
 };
 
 const SearchStack = createNativeStackNavigator<SearchStackParamList>();
@@ -80,6 +107,9 @@ function SearchStackScreen() {
       <SearchStack.Group screenOptions={{ presentation: "modal" }}>
         <SearchStack.Screen name="MovieDetail" component={MovieDetailPage} />
         <SearchStack.Screen name="TvShowDetail" component={TvShowDetailPage} />
+      </SearchStack.Group>
+      <SearchStack.Group screenOptions={webviewHeaderConfig}>
+        <SearchStack.Screen name="Webview" component={WebviewPage} />
       </SearchStack.Group>
     </SearchStack.Navigator>
   );

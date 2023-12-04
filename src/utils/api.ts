@@ -395,7 +395,8 @@ export interface IGetMultiSearchResult {
     adult: boolean;
     backdrop_path: string;
     id: number;
-    title: string;
+    name?: string;
+    title?: string;
     original_language: string;
     original_title: string;
     overview: string;

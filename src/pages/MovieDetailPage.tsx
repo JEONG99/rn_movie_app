@@ -1,4 +1,7 @@
-import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import {
+  NativeStackNavigationProp,
+  NativeStackScreenProps,
+} from "@react-navigation/native-stack";
 import { useQuery } from "@tanstack/react-query";
 import {
   IGetCreditsResult,
@@ -85,10 +88,35 @@ const Overview = styled.Text`
   font-weight: 500;
   color: ${(props) => props.theme.gray.light};
 `;
+const Link = styled.View`
+  margin-bottom: 15px;
+  flex-direction: row;
+  align-items: center;
+  gap: 4px;
+`;
+const LinkText = styled.Text`
+  font-size: 14px;
+  font-weight: 400;
+  color: "rgb(0, 100, 194)";
+`;
 
 type DetailPageProps =
   | NativeStackScreenProps<MovieStackParamList, "Detail">
   | NativeStackScreenProps<SearchStackParamList, "MovieDetail">;
+
+const isMovieNavigationProp = (
+  navigation: DetailPageProps["navigation"]
+): navigation is NativeStackScreenProps<
+  MovieStackParamList,
+  "Detail"
+>["navigation"] => {
+  return (
+    (navigation as NativeStackScreenProps<
+      MovieStackParamList,
+      "Detail"
+    >["navigation"]) !== undefined
+  );
+};
 
 const MovieDetailPage = ({ navigation, route }: DetailPageProps) => {
   const { id, title, imagePath } = route.params;
@@ -120,6 +148,15 @@ const MovieDetailPage = ({ navigation, route }: DetailPageProps) => {
 
   const goBackHome = () => {
     navigation.goBack();
+  };
+
+  const goWebview = (path: string) => {
+    if (!path) return;
+    if (isMovieNavigationProp(navigation)) {
+      navigation.navigate("Webview", { path });
+    } else {
+      navigation.navigate("Webview", { path });
+    }
   };
 
   const isLoading = detailLoading || creditsLoading;
@@ -185,6 +222,12 @@ const MovieDetailPage = ({ navigation, route }: DetailPageProps) => {
               </CastingText>
             ) : null}
           </CastingBox>
+          <TouchableOpacity onPress={() => goWebview(detail?.homepage || "")}>
+            <Link>
+              <Feather name="link" size={20} color="rgb(0, 100, 194)" />
+              <LinkText>Go Homepage</LinkText>
+            </Link>
+          </TouchableOpacity>
           <IconsBlock>
             <TouchableOpacity>
               <Icon>

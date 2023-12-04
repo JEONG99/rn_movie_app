@@ -1,4 +1,4 @@
-import { Image } from "react-native";
+import { TouchableOpacity } from "react-native";
 import { makeImagePath } from "../utils/makeImagePath";
 import styled from "styled-components/native";
 
@@ -26,13 +26,26 @@ const EmptyLogo = styled.Image`
 interface ISearchThumbnailProps {
   width: number;
   height: number;
+  id: number;
+  title: string;
   imagePath: string;
+  isMovie: boolean;
+  goToDetail: (
+    id: number,
+    title: string,
+    imagePath: string,
+    isMovie: boolean
+  ) => void;
 }
 
 const SearchThumbnail = ({
   width,
   height,
+  id,
+  title,
   imagePath,
+  isMovie,
+  goToDetail,
 }: ISearchThumbnailProps) => {
   return (
     <Wrapper
@@ -41,13 +54,18 @@ const SearchThumbnail = ({
         height,
       }}
     >
-      <ThumbnailBox>
-        {imagePath ? (
-          <Thumbnail source={{ uri: makeImagePath(imagePath, "w200") }} />
-        ) : (
-          <EmptyLogo source={require("../assets/images/netflix_logo.png")} />
-        )}
-      </ThumbnailBox>
+      <TouchableOpacity
+        activeOpacity={0.6}
+        onPress={() => goToDetail(id, title, imagePath, isMovie)}
+      >
+        <ThumbnailBox>
+          {imagePath ? (
+            <Thumbnail source={{ uri: makeImagePath(imagePath, "w200") }} />
+          ) : (
+            <EmptyLogo source={require("../assets/images/netflix_logo.png")} />
+          )}
+        </ThumbnailBox>
+      </TouchableOpacity>
     </Wrapper>
   );
 };

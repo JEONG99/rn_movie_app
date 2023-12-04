@@ -87,6 +87,27 @@ const SearchPage = ({ navigation }: SearchPageProps) => {
     onChangeText(query);
   }, [query]);
 
+  const goToDetail = (
+    id: number,
+    title: string,
+    imagePath: string,
+    isMovie: boolean
+  ) => {
+    if (isMovie) {
+      navigation.navigate("MovieDetail", {
+        id,
+        title,
+        imagePath,
+      });
+      return;
+    }
+    navigation.navigate("TvShowDetail", {
+      id,
+      title,
+      imagePath,
+    });
+  };
+
   return (
     <Layout title="Search">
       <Wrapper>
@@ -127,7 +148,11 @@ const SearchPage = ({ navigation }: SearchPageProps) => {
                 <SearchThumbnail
                   width={WIDTH / COLUMNS_NUM}
                   height={(WIDTH / COLUMNS_NUM) * 1.5}
+                  id={item.id}
+                  title={item.title || item.name || ""}
                   imagePath={item.poster_path}
+                  isMovie={item.media_type === "movie"}
+                  goToDetail={goToDetail}
                 />
               )}
               numColumns={COLUMNS_NUM}

@@ -1,4 +1,4 @@
-import { ScrollView } from "react-native";
+import { ScrollView, View } from "react-native";
 import { useEffect, useState } from "react";
 import Layout from "../components/Layout";
 import MovieSlider from "../components/MovieSlider";
@@ -48,18 +48,24 @@ const MoviePage = ({ navigation }: MoviePageProps) => {
         onScroll={onScroll}
         ref={scrollRef}
       >
-        <Banner
-          path={bannerMovie?.poster_path || ""}
-          title={bannerMovie?.title || ""}
-          genres={
-            bannerMovie?.genre_ids.map(
-              (id) =>
-                genresResult.genres.find((genre) => genre.id === id)?.name || ""
-            ) || []
-          }
-          isLoading={isLoading}
-          goDetailPage={goDetailPage}
-        />
+        {bannerMovie?.id ? (
+          <Banner
+            id={bannerMovie.id}
+            path={bannerMovie?.poster_path || ""}
+            title={bannerMovie?.title || ""}
+            genres={
+              bannerMovie?.genre_ids.map(
+                (id) =>
+                  genresResult.genres.find((genre) => genre.id === id)?.name ||
+                  ""
+              ) || []
+            }
+            isLoading={isLoading}
+            goDetailPage={goDetailPage}
+          />
+        ) : (
+          <View style={{ height: 500 }} />
+        )}
         <MovieSlider category={{ key: "now_playing", name: "Now Playing" }} />
         <MovieSlider category={{ key: "popular", name: "Popular" }} />
         <MovieSlider category={{ key: "top_rated", name: "Top Rated" }} />

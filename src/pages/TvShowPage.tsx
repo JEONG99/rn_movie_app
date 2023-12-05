@@ -1,4 +1,4 @@
-import { ScrollView } from "react-native";
+import { ScrollView, View } from "react-native";
 import { useEffect, useState } from "react";
 import Layout from "../components/Layout";
 import TvShowSlider from "../components/TvShowSlider";
@@ -48,18 +48,24 @@ const TvShowPage = ({ navigation }: TvShowPageProps) => {
         onScroll={onScroll}
         ref={scrollRef}
       >
-        <Banner
-          path={bannerTvShow?.poster_path || ""}
-          title={bannerTvShow?.name || ""}
-          genres={
-            bannerTvShow?.genre_ids.map(
-              (id) =>
-                genresResult.genres.find((genre) => genre.id === id)?.name || ""
-            ) || []
-          }
-          isLoading={isLoading}
-          goDetailPage={goDetailPage}
-        />
+        {bannerTvShow?.id ? (
+          <Banner
+            id={bannerTvShow.id}
+            path={bannerTvShow?.poster_path || ""}
+            title={bannerTvShow?.name || ""}
+            genres={
+              bannerTvShow?.genre_ids.map(
+                (id) =>
+                  genresResult.genres.find((genre) => genre.id === id)?.name ||
+                  ""
+              ) || []
+            }
+            isLoading={isLoading}
+            goDetailPage={goDetailPage}
+          />
+        ) : (
+          <View style={{ height: 500 }} />
+        )}
         <TvShowSlider
           category={{ key: "airing_today", name: "Airing Today" }}
         />

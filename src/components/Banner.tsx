@@ -3,15 +3,15 @@ import { ActivityIndicator, TouchableOpacity } from "react-native";
 import { makeImagePath } from "../utils/makeImagePath";
 import { LinearGradient } from "expo-linear-gradient";
 import { Feather } from "@expo/vector-icons";
+import { Image } from "expo-image";
+import { BLUR_HASH } from "../../const";
+import useWishList from "../hooks/useWishList";
+import { useMemo } from "react";
 
 const Wrapper = styled.View`
   position: relative;
   height: 500px;
   justify-content: center;
-`;
-const ImageBG = styled.ImageBackground`
-  height: 500px;
-  background-color: ${(props) => props.theme.gray.dark};
 `;
 const ItemWrapper = styled.View`
   position: absolute;
@@ -54,6 +54,7 @@ const IconText = styled.Text`
 `;
 
 interface IBannerProps {
+  id: number;
   path: string;
   title: string;
   genres: string[];
@@ -62,39 +63,49 @@ interface IBannerProps {
 }
 
 const Banner = ({
+  id,
   path,
   title,
   genres,
   isLoading,
   goDetailPage,
 }: IBannerProps) => {
+  const { isContained, setWishListToStorage } = useWishList(id);
+
   return (
     <Wrapper>
       {isLoading ? (
         <ActivityIndicator color="white" size="large" />
       ) : (
         <>
-          <ImageBG
-            resizeMode="cover"
+          <Image
+            style={{ height: 500 }}
+            contentFit="cover"
             source={{
               uri: makeImagePath(path, "w500"),
             }}
+            placeholder={BLUR_HASH}
+            transition={300}
           >
             <LinearGradient
               colors={["rgba(0,0,0,0)", "rgba(0,0,0,0)", "rgba(0,0,0,1)"]}
               style={{ flex: 1 }}
             />
-          </ImageBG>
+          </Image>
           <ItemWrapper>
             <TextBlock>
               <Title>{title}</Title>
               <Genres>{genres.join("•")}</Genres>
             </TextBlock>
             <IconsBlock>
-              <TouchableOpacity>
+              <TouchableOpacity onPress={setWishListToStorage}>
                 <Icon>
-                  <Feather name="plus-circle" size={26} color="white" />
-                  <IconText>Add Wish List</IconText>
+                  <Feather
+                    name={isContained ? "check" : "plus-circle"}
+                    size={26}
+                    color="white"
+                  />
+                  <IconText>Wish List</IconText>
                 </Icon>
               </TouchableOpacity>
               <TouchableOpacity onPress={goDetailPage}>

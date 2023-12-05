@@ -2,6 +2,8 @@ import { TouchableOpacity } from "react-native";
 import styled from "styled-components/native";
 import { makeImagePath } from "../utils/makeImagePath";
 import { ISelectSeason } from "../pages/TvShowDetailPage";
+import { Image } from "expo-image";
+import { BLUR_HASH } from "../../const";
 
 const Wrapper = styled.View`
   margin-right: 15px;
@@ -21,10 +23,6 @@ const Thumbnail = styled.View`
   border-radius: 5px;
   overflow: hidden;
   background-color: ${(props) => props.theme.gray.dark};
-`;
-const ThumbnailImage = styled.Image`
-  width: 100%;
-  height: 100%;
 `;
 const SelectBar = styled.View<{ $select: boolean }>`
   margin-left: 2px;
@@ -65,7 +63,10 @@ const TvShowSeason = ({
         <Title numberOfLines={1}>{name}</Title>
         <Thumbnail>
           {imagePath ? (
-            <ThumbnailImage
+            <Image
+              style={{ width: "100%", height: "100%" }}
+              placeholder={BLUR_HASH}
+              transition={300}
               source={{ uri: makeImagePath(imagePath, "w200") }}
             />
           ) : (

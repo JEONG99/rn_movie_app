@@ -2,6 +2,8 @@ import styled from "styled-components/native";
 import { makeImagePath } from "../utils/makeImagePath";
 import { useState } from "react";
 import { TouchableOpacity } from "react-native";
+import { Image } from "expo-image";
+import { BLUR_HASH } from "../../const";
 
 const Wrapper = styled.View`
   margin: 10px 0;
@@ -19,10 +21,6 @@ const Thumbnail = styled.View`
   border-radius: 10px;
   overflow: hidden;
   background-color: ${(props) => props.theme.gray.dark};
-`;
-const ThumbnailImage = styled.Image`
-  width: 100%;
-  height: 100%;
 `;
 const TitleBox = styled.View`
   flex: 1;
@@ -72,7 +70,10 @@ const Episode = ({
       <ImageTitleBlock>
         <Thumbnail>
           {imagePath ? (
-            <ThumbnailImage
+            <Image
+              style={{ width: "100%", height: "100%" }}
+              placeholder={BLUR_HASH}
+              transition={300}
               source={{ uri: makeImagePath(imagePath, "w200") }}
             />
           ) : (

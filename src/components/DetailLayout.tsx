@@ -2,7 +2,9 @@ import { Dimensions, ImageBackground, View } from "react-native";
 import styled from "styled-components/native";
 import { makeImagePath } from "../utils/makeImagePath";
 import { LinearGradient } from "expo-linear-gradient";
+import { Image } from "expo-image";
 import { AntDesign } from "@expo/vector-icons";
+import { BLUR_HASH } from "../../const";
 
 const WIDTH = Dimensions.get("window").width;
 const IMAGE_RATIO = WIDTH / 500;
@@ -62,16 +64,18 @@ const DetailLayout = ({
           height: 281 * IMAGE_RATIO,
         }}
       >
-        <ImageBackground
+        <Image
           style={{ flex: 1 }}
-          resizeMode="cover"
+          contentFit="cover"
+          placeholder={BLUR_HASH}
+          transition={300}
           source={{ uri: makeImagePath(imagePath, "w500") }}
         >
           <LinearGradient
             colors={["rgba(0,0,0,0)", "rgba(0,0,0,0)", "rgba(0,0,0,1)"]}
             style={{ flex: 1 }}
           />
-        </ImageBackground>
+        </Image>
         <Close onPress={goBackHome}>
           <AntDesign name="close" size={22} color="white" />
         </Close>

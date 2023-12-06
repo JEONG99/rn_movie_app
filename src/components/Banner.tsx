@@ -6,7 +6,7 @@ import { Feather } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { BLUR_HASH } from "../../const";
 import useWishList from "../hooks/useWishList";
-import { useMemo } from "react";
+import WishListIcon from "./WishListIcon";
 
 const Wrapper = styled.View`
   position: relative;
@@ -70,7 +70,7 @@ const Banner = ({
   isLoading,
   goDetailPage,
 }: IBannerProps) => {
-  const { isContained, setWishListToStorage } = useWishList(id);
+  const { disabled, isContained, setWishListToStorage } = useWishList(id);
 
   return (
     <Wrapper>
@@ -98,13 +98,12 @@ const Banner = ({
               <Genres>{genres.join("•")}</Genres>
             </TextBlock>
             <IconsBlock>
-              <TouchableOpacity onPress={setWishListToStorage}>
+              <TouchableOpacity
+                disabled={disabled}
+                onPress={setWishListToStorage}
+              >
                 <Icon>
-                  <Feather
-                    name={isContained ? "check" : "plus-circle"}
-                    size={26}
-                    color="white"
-                  />
+                  <WishListIcon isChecked={isContained} />
                   <IconText>Wish List</IconText>
                 </Icon>
               </TouchableOpacity>

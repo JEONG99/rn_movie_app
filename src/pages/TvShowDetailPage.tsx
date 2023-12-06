@@ -27,6 +27,8 @@ import TvShowSeason from "../components/TvShowSeason";
 import Episode from "../components/Episode";
 import { FontAwesome5 } from "@expo/vector-icons";
 import { theme } from "../../theme";
+import WishListIcon from "../components/WishListIcon";
+import useWishList from "../hooks/useWishList";
 
 const YearStarBox = styled.View`
   margin-top: 7px;
@@ -145,6 +147,7 @@ export interface ISelectSeason {
 
 const TvShowDetailPage = ({ navigation, route }: DetailPageProps) => {
   const { id, title, imagePath } = route.params;
+  const { disabled, isContained, setWishListToStorage } = useWishList(id);
   const { data: detail, isLoading: detailLoading } =
     useQuery<IGetTvShowDetailResult>({
       queryKey: ["tv", "detail", id],
@@ -285,9 +288,12 @@ const TvShowDetailPage = ({ navigation, route }: DetailPageProps) => {
             </Link>
           </TouchableOpacity>
           <IconsBlock>
-            <TouchableOpacity>
+            <TouchableOpacity
+              disabled={disabled}
+              onPress={setWishListToStorage}
+            >
               <Icon>
-                <Feather name="plus-circle" size={26} color="white" />
+                <WishListIcon isChecked={isContained} />
                 <IconText>Add Wish List</IconText>
               </Icon>
             </TouchableOpacity>

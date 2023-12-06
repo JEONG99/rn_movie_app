@@ -1,7 +1,4 @@
-import {
-  NativeStackNavigationProp,
-  NativeStackScreenProps,
-} from "@react-navigation/native-stack";
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { useQuery } from "@tanstack/react-query";
 import {
   IGetCreditsResult,
@@ -19,6 +16,8 @@ import { TouchableOpacity, View } from "react-native";
 import { Feather } from "@expo/vector-icons";
 import Loader from "../components/Loader";
 import { MovieStackParamList, SearchStackParamList } from "../../App";
+import WishListIcon from "../components/WishListIcon";
+import useWishList from "../hooks/useWishList";
 
 const YearStarBox = styled.View`
   margin-top: 7px;
@@ -76,7 +75,7 @@ const IconsBlock = styled.View`
 `;
 const Icon = styled.View`
   align-items: center;
-  gap: 4px;
+  gap: 2px;
 `;
 const IconText = styled.Text`
   color: ${(props) => props.theme.gray.dark};
@@ -120,6 +119,7 @@ const isMovieNavigationProp = (
 
 const MovieDetailPage = ({ navigation, route }: DetailPageProps) => {
   const { id, title, imagePath } = route.params;
+  const { disabled, isContained, setWishListToStorage } = useWishList(id);
   const { data: detail, isLoading: detailLoading } =
     useQuery<IGetMovieDetailResult>({
       queryKey: ["movie", "detail", id],
@@ -229,10 +229,13 @@ const MovieDetailPage = ({ navigation, route }: DetailPageProps) => {
             </Link>
           </TouchableOpacity>
           <IconsBlock>
-            <TouchableOpacity>
+            <TouchableOpacity
+              disabled={disabled}
+              onPress={setWishListToStorage}
+            >
               <Icon>
-                <Feather name="plus-circle" size={26} color="white" />
-                <IconText>Add Wish List</IconText>
+                <WishListIcon isChecked={isContained} />
+                <IconText>Wish List</IconText>
               </Icon>
             </TouchableOpacity>
           </IconsBlock>

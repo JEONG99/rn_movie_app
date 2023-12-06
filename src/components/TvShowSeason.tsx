@@ -29,7 +29,7 @@ const SelectBar = styled.View<{ $select: boolean }>`
   width: 40px;
   height: 4px;
   border-radius: 3px;
-  background-color: ${(props) => (props.$select ? "#e21114" : "black")};
+  background-color: ${(props) => (props.$select ? props.theme.red : "black")};
 `;
 const EmptyLogo = styled.Image`
   width: 42px;

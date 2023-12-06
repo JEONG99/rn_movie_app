@@ -44,6 +44,7 @@ const TvShowPage = ({ navigation }: TvShowPageProps) => {
   return (
     <Layout title="Tv Show">
       <ScrollView
+        showsVerticalScrollIndicator={false}
         scrollEventThrottle={scrollEventThrottle}
         onScroll={onScroll}
         ref={scrollRef}

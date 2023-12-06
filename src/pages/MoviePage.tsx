@@ -44,6 +44,7 @@ const MoviePage = ({ navigation }: MoviePageProps) => {
   return (
     <Layout title="Movie">
       <ScrollView
+        showsVerticalScrollIndicator={false}
         scrollEventThrottle={scrollEventThrottle}
         onScroll={onScroll}
         ref={scrollRef}

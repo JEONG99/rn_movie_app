@@ -3,11 +3,15 @@ import { makeImagePath } from "../utils/makeImagePath";
 import styled from "styled-components/native";
 import { Image } from "expo-image";
 import { BLUR_HASH } from "../../const";
+import useWishList from "../hooks/useWishList";
+import { Entypo } from "@expo/vector-icons";
+import { theme } from "../../theme";
 
 const Wrapper = styled.View`
   padding: 5px;
 `;
 const ThumbnailBox = styled.View`
+  position: relative;
   justify-content: center;
   align-items: center;
   width: 100%;
@@ -19,6 +23,12 @@ const ThumbnailBox = styled.View`
 const EmptyLogo = styled.Image`
   width: 42px;
   height: 42px;
+`;
+const Heart = styled.View`
+  z-index: 1;
+  position: absolute;
+  top: 2px;
+  right: 2px;
 `;
 
 interface ISearchThumbnailProps {
@@ -45,6 +55,8 @@ const SearchThumbnail = ({
   isMovie,
   goToDetail,
 }: ISearchThumbnailProps) => {
+  const { isContained } = useWishList(id);
+
   return (
     <Wrapper
       style={{
@@ -57,6 +69,11 @@ const SearchThumbnail = ({
         onPress={() => goToDetail(id, title, imagePath, isMovie)}
       >
         <ThumbnailBox>
+          {isContained ? (
+            <Heart>
+              <Entypo name="heart" size={22} color={theme.red} />
+            </Heart>
+          ) : null}
           {imagePath ? (
             <Image
               style={{ width: "100%", height: "100%" }}

@@ -23,7 +23,7 @@ const TvShowPage = ({ navigation }: TvShowPageProps) => {
     queryFn: () => getTvShows({ category: "airing_today" }),
     refetchOnWindowFocus: false,
   });
-  const genresResult = useGenres({ type: "tv" });
+  const genresResult = useGenres();
 
   const goDetailPage = () => {
     if (!bannerTvShow?.id) return;
@@ -57,8 +57,7 @@ const TvShowPage = ({ navigation }: TvShowPageProps) => {
             genres={
               bannerTvShow?.genre_ids.map(
                 (id) =>
-                  genresResult.genres.find((genre) => genre.id === id)?.name ||
-                  ""
+                  genresResult.find((genre) => genre.id === id)?.name || ""
               ) || []
             }
             isLoading={isLoading}

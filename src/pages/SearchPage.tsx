@@ -1,9 +1,7 @@
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import {
-  ScrollView,
   TouchableWithoutFeedback,
   Keyboard,
-  Image,
   FlatList,
   Dimensions,
 } from "react-native";

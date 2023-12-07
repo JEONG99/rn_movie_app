@@ -18,6 +18,7 @@ import { searchQueryAtom, tabRouteNameAtom } from "./src/utils/atom";
 import TvShowDetailPage from "./src/pages/TvShowDetailPage";
 import SearchPage from "./src/pages/SearchPage";
 import WebviewPage from "./src/pages/WebviewPage";
+import TrendingPage from "./src/pages/TrendingPage";
 
 const webviewHeaderConfig: NativeStackNavigationOptions = {
   headerBackVisible: false,
@@ -115,6 +116,38 @@ function SearchStackScreen() {
   );
 }
 
+export type TrendingStackParamList = {
+  TrendingHome: undefined;
+  MovieDetail: { id: number; title: string; imagePath: string };
+  TvShowDetail: { id: number; title: string; imagePath: string };
+  Webview: { path: string };
+};
+
+const TrendingStack = createNativeStackNavigator<TrendingStackParamList>();
+
+function TrendingStackScreen() {
+  return (
+    <TrendingStack.Navigator
+      initialRouteName="TrendingHome"
+      screenOptions={{ headerShown: false }}
+    >
+      <TrendingStack.Group>
+        <TrendingStack.Screen name="TrendingHome" component={TrendingPage} />
+      </TrendingStack.Group>
+      <TrendingStack.Group screenOptions={{ presentation: "modal" }}>
+        <TrendingStack.Screen name="MovieDetail" component={MovieDetailPage} />
+        <TrendingStack.Screen
+          name="TvShowDetail"
+          component={TvShowDetailPage}
+        />
+      </TrendingStack.Group>
+      <TrendingStack.Group screenOptions={webviewHeaderConfig}>
+        <TrendingStack.Screen name="Webview" component={WebviewPage} />
+      </TrendingStack.Group>
+    </TrendingStack.Navigator>
+  );
+}
+
 const Tab = createBottomTabNavigator();
 const queryClient = new QueryClient();
 
@@ -145,6 +178,8 @@ const TabNavigator = () => {
             iconName = "live-tv";
           } else if (route.name === "Search") {
             iconName = "search";
+          } else if (route.name === "Hot") {
+            iconName = "video-collection";
           }
 
           return (
@@ -168,6 +203,7 @@ const TabNavigator = () => {
       <Tab.Screen name="Movie" component={MovieStackScreen} />
       <Tab.Screen name="Tv Show" component={TvShowStackScreen} />
       <Tab.Screen name="Search" component={SearchStackScreen} />
+      <Tab.Screen name="Hot" component={TrendingStackScreen} />
     </Tab.Navigator>
   );
 };

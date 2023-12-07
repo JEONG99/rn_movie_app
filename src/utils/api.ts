@@ -429,3 +429,37 @@ export const getMultiSearch = async ({ query }: IGetMultiSearchProps) => {
     });
   return data;
 };
+
+export interface IGetTrendingMoviesResult {
+  page: number;
+  results: IMovie[];
+  total_pages: number;
+  total_results: number;
+}
+
+export const getTrendingMovies = async () => {
+  const data = await axios
+    .get(`${BASE_URL}/trending/movie/day?language=en-US`, config)
+    .then((response) => response.data)
+    .catch((e) => {
+      throw e;
+    });
+  return data;
+};
+
+export interface IGetTrendingTvShowsResult {
+  page: number;
+  results: ITvShow[];
+  total_pages: number;
+  total_results: number;
+}
+
+export const getTrendingTvShows = async () => {
+  const data = await axios
+    .get(`${BASE_URL}/trending/tv/day?language=en-US`, config)
+    .then((response) => response.data)
+    .catch((e) => {
+      throw e;
+    });
+  return data;
+};

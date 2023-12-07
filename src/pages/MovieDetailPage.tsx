@@ -132,7 +132,7 @@ const MovieDetailPage = ({ navigation, route }: DetailPageProps) => {
       queryFn: () => getMovieCredits({ id }),
       refetchOnReconnect: false,
     });
-  const genresResult = useGenres({ type: "movie" });
+  const genresResult = useGenres();
   const [genres, setGenres] = useState<string[]>([]);
 
   useEffect(() => {
@@ -140,8 +140,7 @@ const MovieDetailPage = ({ navigation, route }: DetailPageProps) => {
     setGenres(
       detail.genres.map(
         (genre) =>
-          genresResult.genres.find((_genre) => _genre.id === genre.id)?.name ||
-          ""
+          genresResult.find((_genre) => _genre.id === genre.id)?.name || ""
       ) || []
     );
   }, [detail]);

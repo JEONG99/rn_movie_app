@@ -23,7 +23,7 @@ const MoviePage = ({ navigation }: MoviePageProps) => {
     queryFn: () => getMovies({ category: "now_playing" }),
     refetchOnWindowFocus: false,
   });
-  const genresResult = useGenres({ type: "movie" });
+  const genresResult = useGenres();
 
   const goDetailPage = () => {
     if (!bannerMovie?.id) return;
@@ -57,8 +57,7 @@ const MoviePage = ({ navigation }: MoviePageProps) => {
             genres={
               bannerMovie?.genre_ids.map(
                 (id) =>
-                  genresResult.genres.find((genre) => genre.id === id)?.name ||
-                  ""
+                  genresResult.find((genre) => genre.id === id)?.name || ""
               ) || []
             }
             isLoading={isLoading}

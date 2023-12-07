@@ -34,7 +34,7 @@ const BannerShadow = styled(AnimatedLinearGradient)`
   height: 200px;
 `;
 
-export type iconNames = "movie" | "live-tv" | "search";
+export type iconNames = "movie" | "live-tv" | "search" | "video-collection";
 
 const icons: {
   [key: string]: iconNames;
@@ -42,6 +42,7 @@ const icons: {
   Movie: "movie",
   "Tv Show": "live-tv",
   Search: "search",
+  Hot: "video-collection",
 };
 
 interface ILayoutProps {

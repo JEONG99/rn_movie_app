@@ -160,7 +160,7 @@ const TvShowDetailPage = ({ navigation, route }: DetailPageProps) => {
       queryFn: () => getTvCredits({ id }),
       refetchOnReconnect: false,
     });
-  const genresResult = useGenres({ type: "tv" });
+  const genresResult = useGenres();
   const [genres, setGenres] = useState<string[]>([]);
   const [selectSeason, setSelectSeason] = useState<ISelectSeason | null>(null);
   const {
@@ -182,8 +182,7 @@ const TvShowDetailPage = ({ navigation, route }: DetailPageProps) => {
     setGenres(
       detail.genres.map(
         (genre) =>
-          genresResult.genres.find((_genre) => _genre.id === genre.id)?.name ||
-          ""
+          genresResult.find((_genre) => _genre.id === genre.id)?.name || ""
       ) || []
     );
   }, [detail]);

@@ -1,6 +1,11 @@
 import styled from "styled-components/native";
-import { ScrollView, TouchableOpacity, SectionList } from "react-native";
-import { useRef, useState, useEffect } from "react";
+import {
+  ScrollView,
+  TouchableOpacity,
+  SectionList,
+  ViewToken,
+} from "react-native";
+import { useRef, useState } from "react";
 import Layout from "../components/Layout";
 import TopTenLogo from "../assets/images/top_ten_logo.svg";
 import { useQuery } from "@tanstack/react-query";
@@ -69,6 +74,7 @@ interface IItem {
 }
 
 interface ISection {
+  index: number;
   Logo: React.FC<SvgProps>;
   title: string;
   data: readonly IItem[];
@@ -80,11 +86,16 @@ const TrendingPage = () => {
   const sectionRef = useRef<SectionList<IItem, ISection>>(null);
   const statusRef = useRef<ScrollView>(null);
   const [scrollIndex, setScrollIndex] = useState(0);
+  const [isScroll, setIsScroll] = useState(false);
 
   const changeScrollIndex = (index: number) => {
+    setIsScroll(true);
     setScrollIndex(index);
     statusRef.current?.scrollTo({ x: 100 * index });
     sectionRef.current?.scrollToLocation({ sectionIndex: index, itemIndex: 0 });
+    setTimeout(() => {
+      setIsScroll(false);
+    }, 500);
   };
 
   const getItemLayout = sectionListGetItemLayout({
@@ -93,6 +104,13 @@ const TrendingPage = () => {
     getSectionHeaderHeight: () => 44,
     getSectionFooterHeight: () => 0,
   });
+
+  const onViewableItemsChanged = (info: { viewableItems: ViewToken[] }) => {
+    if (isScroll) return;
+    const items = info.viewableItems;
+    const section = items[items.length - 1].section as ISection;
+    setScrollIndex(section.index);
+  };
 
   const { data: trendingSearies, isLoading: seariesLoading } = useQuery<
     IGetTrendingTvShowsResult,
@@ -103,6 +121,7 @@ const TrendingPage = () => {
     queryFn: getTrendingTvShows,
     refetchOnWindowFocus: false,
     select: (_data) => ({
+      index: 0,
       Logo: TopTenLogo,
       title: "top 10 searies",
       data: _data.results.map((result) => ({ ...result, title: result.name })),
@@ -117,6 +136,7 @@ const TrendingPage = () => {
     queryFn: getTrendingMovies,
     refetchOnWindowFocus: false,
     select: (_data) => ({
+      index: 1,
       Logo: TopTenLogo,
       title: "top 10 movies",
       data: _data.results.map((result) => ({ ...result })),
@@ -154,6 +174,7 @@ const TrendingPage = () => {
         {trendingSearies && trendingMovies ? (
           <SectionList
             ref={sectionRef}
+            onViewableItemsChanged={onViewableItemsChanged}
             getItemLayout={getItemLayout as any}
             sections={[trendingSearies, trendingMovies]}
             keyExtractor={(item, index) => item.title + index + ""}
@@ -178,7 +199,7 @@ const TrendingPage = () => {
                 }
               />
             )}
-            stickySectionHeadersEnabled={false}
+            stickySectionHeadersEnabled={true}
           />
         ) : null}
       </Wrapper>

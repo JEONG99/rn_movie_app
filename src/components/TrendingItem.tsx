@@ -1,4 +1,4 @@
-import {} from "react";
+import React from "react";
 import { TouchableOpacity } from "react-native";
 import styled from "styled-components/native";
 import { Image } from "expo-image";
@@ -100,4 +100,4 @@ const TrendingItem = ({
   );
 };
 
-export default TrendingItem;
+export default React.memo(TrendingItem);

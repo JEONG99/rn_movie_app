@@ -1,14 +1,27 @@
 import { useRef, useEffect, useState } from "react";
 import { Animated } from "react-native";
 import { Feather } from "@expo/vector-icons";
+import styled from "styled-components/native";
+import { theme } from "../../theme";
+
+const Icon = styled.View`
+  align-items: center;
+`;
+const IconText = styled.Text`
+  font-weight: 400;
+`;
 
 interface IWishListIconProps {
+  fontSize?: number;
+  fontColor?: string;
   size?: number;
   color?: string;
   isChecked: boolean;
 }
 
 const WishListIcon = ({
+  fontSize = 12,
+  fontColor = theme.gray.dark,
   size = 26,
   color = "white",
   isChecked,
@@ -52,29 +65,34 @@ const WishListIcon = ({
   }, []);
 
   return (
-    <Animated.View
-      style={{
-        transform: [
-          {
-            rotateZ: rotateAnim.interpolate({
-              inputRange: [-1, 1],
-              outputRange: ["-70deg", "70deg"],
-            }),
-          },
-        ],
-      }}
-    >
-      <Feather
-        name={isCheckedAnim ? "check" : "plus"}
-        size={size}
-        color={color}
+    <Icon>
+      <Animated.View
         style={{
-          transform: isCheckedAnim
-            ? [{ rotateZ: "-70deg" }]
-            : [{ rotateZ: "70deg" }],
+          transform: [
+            {
+              rotateZ: rotateAnim.interpolate({
+                inputRange: [-1, 1],
+                outputRange: ["-70deg", "70deg"],
+              }),
+            },
+          ],
         }}
-      />
-    </Animated.View>
+      >
+        <Feather
+          name={isCheckedAnim ? "check" : "plus"}
+          size={size}
+          color={color}
+          style={{
+            transform: isCheckedAnim
+              ? [{ rotateZ: "-70deg" }]
+              : [{ rotateZ: "70deg" }],
+          }}
+        />
+      </Animated.View>
+      <IconText style={{ fontSize: fontSize, color: fontColor }}>
+        Wish List
+      </IconText>
+    </Icon>
   );
 };
 

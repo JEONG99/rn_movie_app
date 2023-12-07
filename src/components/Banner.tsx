@@ -51,6 +51,7 @@ const Icon = styled.View`
 const IconText = styled.Text`
   color: white;
   font-weight: 400;
+  font-size: 14px;
 `;
 
 interface IBannerProps {
@@ -102,10 +103,11 @@ const Banner = ({
                 disabled={disabled}
                 onPress={setWishListToStorage}
               >
-                <Icon>
-                  <WishListIcon isChecked={isContained} />
-                  <IconText>Wish List</IconText>
-                </Icon>
+                <WishListIcon
+                  fontSize={14}
+                  fontColor="white"
+                  isChecked={isContained}
+                />
               </TouchableOpacity>
               <TouchableOpacity onPress={goDetailPage}>
                 <Icon>

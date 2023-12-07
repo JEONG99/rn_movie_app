@@ -18,6 +18,7 @@ import Loader from "../components/Loader";
 import { MovieStackParamList, SearchStackParamList } from "../../App";
 import WishListIcon from "../components/WishListIcon";
 import useWishList from "../hooks/useWishList";
+import { theme } from "../../theme";
 
 const YearStarBox = styled.View`
   margin-top: 7px;
@@ -72,15 +73,6 @@ const IconsBlock = styled.View`
   flex-direction: row;
   margin-top: 4px;
   margin-bottom: 10px;
-`;
-const Icon = styled.View`
-  align-items: center;
-  gap: 2px;
-`;
-const IconText = styled.Text`
-  color: ${(props) => props.theme.gray.dark};
-  font-size: 12px;
-  font-weight: 400;
 `;
 const Overview = styled.Text`
   font-size: 16px;
@@ -232,10 +224,7 @@ const MovieDetailPage = ({ navigation, route }: DetailPageProps) => {
               disabled={disabled}
               onPress={setWishListToStorage}
             >
-              <Icon>
-                <WishListIcon isChecked={isContained} />
-                <IconText>Wish List</IconText>
-              </Icon>
+              <WishListIcon isChecked={isContained} />
             </TouchableOpacity>
           </IconsBlock>
           <Overview>{detail?.overview}</Overview>

@@ -291,10 +291,7 @@ const TvShowDetailPage = ({ navigation, route }: DetailPageProps) => {
               disabled={disabled}
               onPress={setWishListToStorage}
             >
-              <Icon>
-                <WishListIcon isChecked={isContained} />
-                <IconText>Add Wish List</IconText>
-              </Icon>
+              <WishListIcon isChecked={isContained} />
             </TouchableOpacity>
           </IconsBlock>
           <ScrollView horizontal showsHorizontalScrollIndicator={false}>

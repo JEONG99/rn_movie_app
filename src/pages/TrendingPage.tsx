@@ -1,6 +1,6 @@
 import styled from "styled-components/native";
 import { ScrollView, TouchableOpacity, SectionList } from "react-native";
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import Layout from "../components/Layout";
 import TopTenLogo from "../assets/images/top_ten_logo.svg";
 import { useQuery } from "@tanstack/react-query";
@@ -14,6 +14,8 @@ import { AxiosError } from "axios";
 import Loader from "../components/Loader";
 import { SvgProps } from "react-native-svg";
 import TrendingItem from "../components/TrendingItem";
+import useGenres from "../hooks/useGenres";
+import sectionListGetItemLayout from "react-native-section-list-get-item-layout";
 
 const Wrapper = styled.View`
   flex: 1;
@@ -75,13 +77,22 @@ interface ISection {
 const STATUS = ["top 10 searies", "top 10 movies"];
 
 const TrendingPage = () => {
+  const sectionRef = useRef<SectionList<IItem, ISection>>(null);
   const statusRef = useRef<ScrollView>(null);
   const [scrollIndex, setScrollIndex] = useState(0);
 
   const changeScrollIndex = (index: number) => {
     setScrollIndex(index);
     statusRef.current?.scrollTo({ x: 100 * index });
+    sectionRef.current?.scrollToLocation({ sectionIndex: index, itemIndex: 0 });
   };
+
+  const getItemLayout = sectionListGetItemLayout({
+    getItemHeight: () => 375,
+    getSeparatorHeight: () => 0,
+    getSectionHeaderHeight: () => 44,
+    getSectionFooterHeight: () => 0,
+  });
 
   const { data: trendingSearies, isLoading: seariesLoading } = useQuery<
     IGetTrendingTvShowsResult,
@@ -111,6 +122,7 @@ const TrendingPage = () => {
       data: _data.results.map((result) => ({ ...result })),
     }),
   });
+  const genres = useGenres();
 
   const isLoading = seariesLoading || moviesLoading;
   return (
@@ -141,6 +153,8 @@ const TrendingPage = () => {
         {isLoading ? <Loader size="small" /> : null}
         {trendingSearies && trendingMovies ? (
           <SectionList
+            ref={sectionRef}
+            getItemLayout={getItemLayout as any}
             sections={[trendingSearies, trendingMovies]}
             keyExtractor={(item, index) => item.title + index + ""}
             renderSectionHeader={({ section: { title, Logo } }) => (
@@ -149,8 +163,22 @@ const TrendingPage = () => {
                 <SectionHeaderText>{title}</SectionHeaderText>
               </SectionHeader>
             )}
-            renderItem={({ item }) => <TrendingItem />}
-            stickySectionHeadersEnabled
+            renderItem={({ item, index }) => (
+              <TrendingItem
+                id={item.id}
+                index={index + 1 + ""}
+                title={item.title}
+                imagePath={item.backdrop_path}
+                overview={item.overview}
+                genres={
+                  item.genre_ids.map(
+                    (id) =>
+                      genres.find((_genre) => _genre.id === id)?.name || ""
+                  ) || []
+                }
+              />
+            )}
+            stickySectionHeadersEnabled={false}
           />
         ) : null}
       </Wrapper>

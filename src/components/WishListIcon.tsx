@@ -35,6 +35,9 @@ const WishListIcon = ({
       duration: 300,
       useNativeDriver: true,
     }).start();
+    setTimeout(() => {
+      setIsCheckedAnim(true);
+    }, 200);
   };
 
   const rotateLeft = () => {
@@ -43,18 +46,15 @@ const WishListIcon = ({
       duration: 300,
       useNativeDriver: true,
     }).start();
+    setTimeout(() => {
+      setIsCheckedAnim(false);
+    }, 100);
   };
 
   useEffect(() => {
     if (isChecked) {
-      setTimeout(() => {
-        setIsCheckedAnim(true);
-      }, 200);
       rotateRight();
     } else {
-      setTimeout(() => {
-        setIsCheckedAnim(false);
-      }, 100);
       rotateLeft();
     }
   }, [isChecked]);

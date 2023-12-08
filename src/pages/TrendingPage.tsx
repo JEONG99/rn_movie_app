@@ -21,6 +21,8 @@ import { SvgProps } from "react-native-svg";
 import TrendingItem from "../components/TrendingItem";
 import useGenres from "../hooks/useGenres";
 import sectionListGetItemLayout from "react-native-section-list-get-item-layout";
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import { TrendingStackParamList } from "../../App";
 
 const Wrapper = styled.View`
   flex: 1;
@@ -60,6 +62,7 @@ const SectionHeaderText = styled.Text`
 `;
 
 interface IItem {
+  category: string;
   adult: boolean;
   backdrop_path: string;
   genre_ids: number[];
@@ -82,7 +85,12 @@ interface ISection {
 
 const STATUS = ["top 10 searies", "top 10 movies"];
 
-const TrendingPage = () => {
+export type TrendingPageProps = NativeStackScreenProps<
+  TrendingStackParamList,
+  "TrendingHome"
+>;
+
+const TrendingPage = ({ navigation }: TrendingPageProps) => {
   const sectionRef = useRef<SectionList<IItem, ISection>>(null);
   const statusRef = useRef<ScrollView>(null);
   const [scrollIndex, setScrollIndex] = useState(0);
@@ -124,7 +132,11 @@ const TrendingPage = () => {
       index: 0,
       Logo: TopTenLogo,
       title: "top 10 searies",
-      data: _data.results.map((result) => ({ ...result, title: result.name })),
+      data: _data.results.map((result) => ({
+        ...result,
+        title: result.name,
+        category: "tv",
+      })),
     }),
   });
   const { data: trendingMovies, isLoading: moviesLoading } = useQuery<
@@ -139,10 +151,28 @@ const TrendingPage = () => {
       index: 1,
       Logo: TopTenLogo,
       title: "top 10 movies",
-      data: _data.results.map((result) => ({ ...result })),
+      data: _data.results.map((result) => ({ ...result, category: "movie" })),
     }),
   });
   const genres = useGenres();
+
+  const goToDetail = (
+    id: number,
+    title: string,
+    imagePath: string,
+    category: string
+  ) => {
+    switch (category) {
+      case "tv":
+        navigation.navigate("TvShowDetail", { id, title, imagePath });
+        break;
+      case "movie":
+        navigation.navigate("MovieDetail", { id, title, imagePath });
+        break;
+      default:
+        break;
+    }
+  };
 
   const isLoading = seariesLoading || moviesLoading;
   return (
@@ -173,6 +203,7 @@ const TrendingPage = () => {
         {isLoading ? <Loader size="small" /> : null}
         {trendingSearies && trendingMovies ? (
           <SectionList
+            initialNumToRender={40}
             ref={sectionRef}
             onViewableItemsChanged={onViewableItemsChanged}
             getItemLayout={getItemLayout as any}
@@ -196,6 +227,14 @@ const TrendingPage = () => {
                     (id) =>
                       genres.find((_genre) => _genre.id === id)?.name || ""
                   ) || []
+                }
+                goToDetail={() =>
+                  goToDetail(
+                    item.id,
+                    item.title,
+                    item.backdrop_path,
+                    item.category
+                  )
                 }
               />
             )}

@@ -15,7 +15,11 @@ import { useEffect, useState } from "react";
 import { TouchableOpacity, View } from "react-native";
 import { Feather } from "@expo/vector-icons";
 import Loader from "../components/Loader";
-import { MovieStackParamList, SearchStackParamList } from "../../App";
+import {
+  MovieStackParamList,
+  SearchStackParamList,
+  TrendingStackParamList,
+} from "../../App";
 import WishListIcon from "../components/WishListIcon";
 import useWishList from "../hooks/useWishList";
 import { theme } from "../../theme";
@@ -93,21 +97,8 @@ const LinkText = styled.Text`
 
 type DetailPageProps =
   | NativeStackScreenProps<MovieStackParamList, "Detail">
-  | NativeStackScreenProps<SearchStackParamList, "MovieDetail">;
-
-const isMovieNavigationProp = (
-  navigation: DetailPageProps["navigation"]
-): navigation is NativeStackScreenProps<
-  MovieStackParamList,
-  "Detail"
->["navigation"] => {
-  return (
-    (navigation as NativeStackScreenProps<
-      MovieStackParamList,
-      "Detail"
-    >["navigation"]) !== undefined
-  );
-};
+  | NativeStackScreenProps<SearchStackParamList, "MovieDetail">
+  | NativeStackScreenProps<TrendingStackParamList, "MovieDetail">;
 
 const MovieDetailPage = ({ navigation, route }: DetailPageProps) => {
   const { id, title, imagePath } = route.params;
@@ -143,10 +134,32 @@ const MovieDetailPage = ({ navigation, route }: DetailPageProps) => {
 
   const goWebview = (path: string) => {
     if (!path) return;
-    if (isMovieNavigationProp(navigation)) {
-      navigation.navigate("Webview", { path });
-    } else {
-      navigation.navigate("Webview", { path });
+    let _navigation;
+    const root = navigation.getState().routes[0].name;
+    switch (root) {
+      case "MovieHome":
+        _navigation = navigation as NativeStackScreenProps<
+          MovieStackParamList,
+          "Detail"
+        >["navigation"];
+        _navigation.navigate("Webview", { path });
+        break;
+      case "SearchHome":
+        _navigation = navigation as NativeStackScreenProps<
+          SearchStackParamList,
+          "MovieDetail"
+        >["navigation"];
+        _navigation.navigate("Webview", { path });
+        break;
+      case "TrendingHome":
+        _navigation = navigation as NativeStackScreenProps<
+          TrendingStackParamList,
+          "MovieDetail"
+        >["navigation"];
+        _navigation.navigate("Webview", { path });
+        break;
+      default:
+        break;
     }
   };
 

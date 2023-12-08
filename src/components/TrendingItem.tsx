@@ -58,6 +58,7 @@ interface ITrendingItemProps {
   imagePath: string;
   overview: string;
   genres: string[];
+  goToDetail: () => void;
 }
 
 const TrendingItem = ({
@@ -67,6 +68,7 @@ const TrendingItem = ({
   imagePath,
   overview,
   genres,
+  goToDetail,
 }: ITrendingItemProps) => {
   const { disabled, isContained, setWishListToStorage } = useWishList(id);
 
@@ -76,25 +78,30 @@ const TrendingItem = ({
         <RankingText>{index.padStart(2, "0")}</RankingText>
       </Ranking>
       <MainBody>
-        <ImageBox>
-          <Image
-            style={{ width: "100%", height: "100%" }}
-            contentFit="cover"
-            source={{
-              uri: makeImagePath(imagePath, "w500"),
-            }}
-            placeholder={BLUR_HASH}
-            transition={300}
-          />
-        </ImageBox>
-        <Icons>
-          <TouchableOpacity disabled={disabled} onPress={setWishListToStorage}>
-            <WishListIcon isChecked={isContained} />
-          </TouchableOpacity>
-        </Icons>
-        <Title>{title}</Title>
-        <Overview numberOfLines={3}>{overview}</Overview>
-        <Genres>{genres.join("•")}</Genres>
+        <TouchableOpacity activeOpacity={1} onPress={goToDetail}>
+          <ImageBox>
+            <Image
+              style={{ width: "100%", height: "100%" }}
+              contentFit="cover"
+              source={{
+                uri: makeImagePath(imagePath, "w500"),
+              }}
+              placeholder={BLUR_HASH}
+              transition={300}
+            />
+          </ImageBox>
+          <Icons>
+            <TouchableOpacity
+              disabled={disabled}
+              onPress={setWishListToStorage}
+            >
+              <WishListIcon isChecked={isContained} />
+            </TouchableOpacity>
+          </Icons>
+          <Title numberOfLines={1}>{title}</Title>
+          <Overview numberOfLines={3}>{overview}</Overview>
+          <Genres>{genres.join("•")}</Genres>
+        </TouchableOpacity>
       </MainBody>
     </Wrapper>
   );

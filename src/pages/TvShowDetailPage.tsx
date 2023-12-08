@@ -6,7 +6,11 @@ import {
   Text,
 } from "react-native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { SearchStackParamList, TvShowStackParamList } from "../../App";
+import {
+  SearchStackParamList,
+  TrendingStackParamList,
+  TvShowStackParamList,
+} from "../../App";
 import { useQuery } from "@tanstack/react-query";
 import {
   IGetCreditsResult,
@@ -123,21 +127,8 @@ const LinkText = styled.Text`
 
 type DetailPageProps =
   | NativeStackScreenProps<TvShowStackParamList, "Detail">
-  | NativeStackScreenProps<SearchStackParamList, "TvShowDetail">;
-
-const isMovieNavigationProp = (
-  navigation: DetailPageProps["navigation"]
-): navigation is NativeStackScreenProps<
-  TvShowStackParamList,
-  "Detail"
->["navigation"] => {
-  return (
-    (navigation as NativeStackScreenProps<
-      TvShowStackParamList,
-      "Detail"
-    >["navigation"]) !== undefined
-  );
-};
+  | NativeStackScreenProps<SearchStackParamList, "TvShowDetail">
+  | NativeStackScreenProps<TrendingStackParamList, "TvShowDetail">;
 
 export interface ISelectSeason {
   tvShowId: number;
@@ -212,10 +203,32 @@ const TvShowDetailPage = ({ navigation, route }: DetailPageProps) => {
 
   const goWebview = (path: string) => {
     if (!path) return;
-    if (isMovieNavigationProp(navigation)) {
-      navigation.navigate("Webview", { path });
-    } else {
-      navigation.navigate("Webview", { path });
+    let _navigation;
+    const root = navigation.getState().routes[0].name;
+    switch (root) {
+      case "TvShowHome":
+        _navigation = navigation as NativeStackScreenProps<
+          TvShowStackParamList,
+          "Detail"
+        >["navigation"];
+        _navigation.navigate("Webview", { path });
+        break;
+      case "SearchHome":
+        _navigation = navigation as NativeStackScreenProps<
+          SearchStackParamList,
+          "TvShowDetail"
+        >["navigation"];
+        _navigation.navigate("Webview", { path });
+        break;
+      case "TrendingHome":
+        _navigation = navigation as NativeStackScreenProps<
+          TrendingStackParamList,
+          "TvShowDetail"
+        >["navigation"];
+        _navigation.navigate("Webview", { path });
+        break;
+      default:
+        break;
     }
   };
 

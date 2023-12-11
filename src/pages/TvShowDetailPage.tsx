@@ -28,6 +28,8 @@ import { FontAwesome5 } from "@expo/vector-icons";
 import { theme } from "../../theme";
 import WishListIcon from "../components/WishListIcon";
 import useWishList from "../hooks/useWishList";
+import { useRecoilValue } from "recoil";
+import { tabRouteNameAtom } from "../utils/atom";
 
 const YearStarBox = styled.View`
   margin-top: 7px;
@@ -133,6 +135,7 @@ export interface ISelectSeason {
 
 const TvShowDetailPage = ({ navigation, route }: DetailPageProps) => {
   const { id, title, imagePath } = route.params;
+  const root = useRecoilValue(tabRouteNameAtom);
   const { disabled, isContained, setWishListToStorage } = useWishList(id);
   const { data: detail, isLoading: detailLoading } =
     useQuery<IGetTvShowDetailResult>({
@@ -196,22 +199,20 @@ const TvShowDetailPage = ({ navigation, route }: DetailPageProps) => {
     navigation.goBack();
   };
 
-  /*
   const goWebview = (path: string) => {
     if (!path) return;
     let _navigation;
-    const root = navigation.getState().routes[0].name;
     switch (root) {
       case "TvShowHome":
         _navigation = navigation as NativeStackScreenProps<
           TvShowStackParamList,
-          "Detail"
+          "TvShowDetail"
         >["navigation"];
         _navigation.navigate("Webview", { path });
         break;
-      case "SearchHome":
+      case "MovieHome":
         _navigation = navigation as NativeStackScreenProps<
-          SearchStackParamList,
+          MovieStackParamList,
           "TvShowDetail"
         >["navigation"];
         _navigation.navigate("Webview", { path });
@@ -227,7 +228,6 @@ const TvShowDetailPage = ({ navigation, route }: DetailPageProps) => {
         break;
     }
   };
-  */
 
   const isLoading = detailLoading || creditsLoading;
   return (
@@ -292,7 +292,7 @@ const TvShowDetailPage = ({ navigation, route }: DetailPageProps) => {
           </CastingBox>
           <TouchableOpacity
             onPress={() => {
-              //goWebview(detail?.homepage || "")
+              goWebview(detail?.homepage || "");
             }}
           >
             <Link>

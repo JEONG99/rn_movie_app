@@ -109,7 +109,44 @@ const SearchPage = ({ navigation }: SearchPageProps) => {
     imagePath: string,
     isMovie: boolean
   ) => {
-    console.log(root);
+    let _navigation;
+    switch (root) {
+      case "TvShowHome":
+        _navigation = navigation as NativeStackScreenProps<
+          TvShowStackParamList,
+          "Search"
+        >["navigation"];
+        if (isMovie) {
+          _navigation.navigate("MovieDetail", { id, title, imagePath });
+          return;
+        }
+        _navigation.navigate("TvShowDetail", { id, title, imagePath });
+        break;
+      case "MovieHome":
+        _navigation = navigation as NativeStackScreenProps<
+          MovieStackParamList,
+          "Search"
+        >["navigation"];
+        if (isMovie) {
+          _navigation.navigate("MovieDetail", { id, title, imagePath });
+          return;
+        }
+        _navigation.navigate("TvShowDetail", { id, title, imagePath });
+        break;
+      case "TrendingHome":
+        _navigation = navigation as NativeStackScreenProps<
+          TrendingStackParamList,
+          "Search"
+        >["navigation"];
+        if (isMovie) {
+          _navigation.navigate("MovieDetail", { id, title, imagePath });
+          return;
+        }
+        _navigation.navigate("TvShowDetail", { id, title, imagePath });
+        break;
+      default:
+        break;
+    }
   };
 
   return (

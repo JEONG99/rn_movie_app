@@ -22,7 +22,9 @@ import {
 } from "../../App";
 import WishListIcon from "../components/WishListIcon";
 import useWishList from "../hooks/useWishList";
-import { theme } from "../../theme";
+import { getFocusedRouteNameFromRoute } from "@react-navigation/core";
+import { useRecoilValue } from "recoil";
+import { tabRouteNameAtom } from "../utils/atom";
 
 const YearStarBox = styled.View`
   margin-top: 7px;
@@ -102,6 +104,7 @@ type DetailPageProps =
 
 const MovieDetailPage = ({ navigation, route }: DetailPageProps) => {
   const { id, title, imagePath } = route.params;
+  const root = useRecoilValue(tabRouteNameAtom);
   const { disabled, isContained, setWishListToStorage } = useWishList(id);
   const { data: detail, isLoading: detailLoading } =
     useQuery<IGetMovieDetailResult>({
@@ -132,22 +135,20 @@ const MovieDetailPage = ({ navigation, route }: DetailPageProps) => {
     navigation.goBack();
   };
 
-  /*
   const goWebview = (path: string) => {
     if (!path) return;
     let _navigation;
-    const root = navigation.getState().routes[0].name;
     switch (root) {
       case "MovieHome":
         _navigation = navigation as NativeStackScreenProps<
           MovieStackParamList,
-          "Detail"
+          "MovieDetail"
         >["navigation"];
         _navigation.navigate("Webview", { path });
         break;
-      case "SearchHome":
+      case "TvShowHome":
         _navigation = navigation as NativeStackScreenProps<
-          SearchStackParamList,
+          TvShowStackParamList,
           "MovieDetail"
         >["navigation"];
         _navigation.navigate("Webview", { path });
@@ -163,7 +164,6 @@ const MovieDetailPage = ({ navigation, route }: DetailPageProps) => {
         break;
     }
   };
-  */
 
   const isLoading = detailLoading || creditsLoading;
   return (
@@ -230,7 +230,7 @@ const MovieDetailPage = ({ navigation, route }: DetailPageProps) => {
           </CastingBox>
           <TouchableOpacity
             onPress={() => {
-              //goWebview(detail?.homepage || "")
+              goWebview(detail?.homepage || "");
             }}
           >
             <Link>

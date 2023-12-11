@@ -278,12 +278,12 @@ const TabNavigator = () => {
         tabBarActiveTintColor: "white",
         tabBarInactiveTintColor: "rgba(255,255,255,0.3)",
       })}
-      screenListeners={{
-        tabPress: (e) => {
-          setTabRouteName(e.target || "");
+      screenListeners={({ route }) => ({
+        tabPress: () => {
+          setTabRouteName(getFocusedRouteNameFromRoute(route) || "");
           setSearchQuery("");
         },
-      }}
+      })}
     >
       <Tab.Screen name="Movie" component={MovieStackScreen} />
       <Tab.Screen name="Tv Show" component={TvShowStackScreen} />

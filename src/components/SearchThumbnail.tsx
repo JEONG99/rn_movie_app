@@ -44,6 +44,7 @@ interface ISearchThumbnailProps {
     imagePath: string,
     isMovie: boolean
   ) => void;
+  isLast: boolean;
 }
 
 const SearchThumbnail = ({
@@ -54,6 +55,7 @@ const SearchThumbnail = ({
   imagePath,
   isMovie,
   goToDetail,
+  isLast,
 }: ISearchThumbnailProps) => {
   const { isContained } = useWishList(id);
 
@@ -62,6 +64,7 @@ const SearchThumbnail = ({
       style={{
         width,
         height,
+        marginBottom: isLast ? 50 : 0,
       }}
     >
       <TouchableOpacity

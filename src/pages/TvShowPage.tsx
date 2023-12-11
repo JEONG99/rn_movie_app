@@ -27,11 +27,15 @@ const TvShowPage = ({ navigation }: TvShowPageProps) => {
 
   const goDetailPage = () => {
     if (!bannerTvShow?.id) return;
-    navigation.navigate("Detail", {
+    navigation.navigate("TvShowDetail", {
       id: bannerTvShow.id,
       title: bannerTvShow.name,
       imagePath: bannerTvShow.backdrop_path,
     });
+  };
+
+  const goSearch = () => {
+    navigation.navigate("Search");
   };
 
   useEffect(() => {
@@ -42,7 +46,7 @@ const TvShowPage = ({ navigation }: TvShowPageProps) => {
   }, [data]);
 
   return (
-    <Layout title="Tv Show">
+    <Layout title="Tv Show" goSearch={goSearch}>
       <ScrollView
         showsVerticalScrollIndicator={false}
         scrollEventThrottle={scrollEventThrottle}

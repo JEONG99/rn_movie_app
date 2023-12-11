@@ -17,8 +17,8 @@ import { Feather } from "@expo/vector-icons";
 import Loader from "../components/Loader";
 import {
   MovieStackParamList,
-  SearchStackParamList,
   TrendingStackParamList,
+  TvShowStackParamList,
 } from "../../App";
 import WishListIcon from "../components/WishListIcon";
 import useWishList from "../hooks/useWishList";
@@ -96,8 +96,8 @@ const LinkText = styled.Text`
 `;
 
 type DetailPageProps =
-  | NativeStackScreenProps<MovieStackParamList, "Detail">
-  | NativeStackScreenProps<SearchStackParamList, "MovieDetail">
+  | NativeStackScreenProps<MovieStackParamList, "MovieDetail">
+  | NativeStackScreenProps<TvShowStackParamList, "MovieDetail">
   | NativeStackScreenProps<TrendingStackParamList, "MovieDetail">;
 
 const MovieDetailPage = ({ navigation, route }: DetailPageProps) => {
@@ -132,6 +132,7 @@ const MovieDetailPage = ({ navigation, route }: DetailPageProps) => {
     navigation.goBack();
   };
 
+  /*
   const goWebview = (path: string) => {
     if (!path) return;
     let _navigation;
@@ -162,6 +163,7 @@ const MovieDetailPage = ({ navigation, route }: DetailPageProps) => {
         break;
     }
   };
+  */
 
   const isLoading = detailLoading || creditsLoading;
   return (
@@ -226,7 +228,11 @@ const MovieDetailPage = ({ navigation, route }: DetailPageProps) => {
               </CastingText>
             ) : null}
           </CastingBox>
-          <TouchableOpacity onPress={() => goWebview(detail?.homepage || "")}>
+          <TouchableOpacity
+            onPress={() => {
+              //goWebview(detail?.homepage || "")
+            }}
+          >
             <Link>
               <Feather name="link" size={20} color="rgb(0, 100, 194)" />
               <LinkText>Go Homepage</LinkText>

@@ -45,7 +45,7 @@ const TvShowSlider = ({ category, last = false }: ISliderProps) => {
   });
 
   const goDetailPage = (id: number, title: string, imagePath: string) => {
-    navigation.navigate("Detail", {
+    navigation.navigate("TvShowDetail", {
       id,
       title,
       imagePath,

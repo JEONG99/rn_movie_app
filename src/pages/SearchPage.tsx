@@ -6,8 +6,11 @@ import {
   Dimensions,
 } from "react-native";
 import { useState, useEffect } from "react";
-import Layout from "../components/Layout";
-import { SearchStackParamList } from "../../App";
+import {
+  MovieStackParamList,
+  TrendingStackParamList,
+  TvShowStackParamList,
+} from "../../App";
 import styled from "styled-components/native";
 import { MaterialIcons } from "@expo/vector-icons";
 import { AntDesign } from "@expo/vector-icons";
@@ -15,17 +18,31 @@ import { useQuery } from "@tanstack/react-query";
 import { IGetMultiSearchResult, getMultiSearch } from "../utils/api";
 import Loader from "../components/Loader";
 import SearchThumbnail from "../components/SearchThumbnail";
-import { useRecoilState } from "recoil";
-import { searchQueryAtom } from "../utils/atom";
+import { useRecoilState, useRecoilValue } from "recoil";
+import { searchQueryAtom, tabRouteNameAtom } from "../utils/atom";
+import { Entypo } from "@expo/vector-icons";
+import { theme } from "../../theme";
 
 const Wrapper = styled.View`
   flex: 1;
-  padding-top: 100px;
+  padding-top: 50px;
+  background-color: black;
+`;
+const Header = styled.View`
+  flex-direction: row;
+  align-items: center;
+  margin-bottom: 10px;
+  padding-left: 8px;
+  padding-right: 5px;
+`;
+const Back = styled.View`
+  flex: 0.13;
+  align-items: center;
 `;
 const InputBox = styled.View`
+  flex: 1;
   position: relative;
   justify-content: center;
-  margin-bottom: 10px;
   padding: 0 10px;
 `;
 const CloseIcon = styled.TouchableOpacity`
@@ -55,15 +72,16 @@ const Title = styled.Text`
   color: ${(props) => props.theme.gray.light};
 `;
 
-export type SearchPageProps = NativeStackScreenProps<
-  SearchStackParamList,
-  "SearchHome"
->;
+export type SearchPageProps =
+  | NativeStackScreenProps<MovieStackParamList, "Search">
+  | NativeStackScreenProps<TvShowStackParamList, "Search">
+  | NativeStackScreenProps<TrendingStackParamList, "Search">;
 
 const WIDTH = Dimensions.get("window").width;
 const COLUMNS_NUM = 3;
 
 const SearchPage = ({ navigation }: SearchPageProps) => {
+  const root = useRecoilValue(tabRouteNameAtom);
   const [query, setQuery] = useRecoilState(searchQueryAtom);
   const [text, onChangeText] = useState<string>("");
   const { data, isLoading } = useQuery<IGetMultiSearchResult>({
@@ -91,29 +109,27 @@ const SearchPage = ({ navigation }: SearchPageProps) => {
     imagePath: string,
     isMovie: boolean
   ) => {
-    if (isMovie) {
-      navigation.navigate("MovieDetail", {
-        id,
-        title,
-        imagePath,
-      });
-      return;
-    }
-    navigation.navigate("TvShowDetail", {
-      id,
-      title,
-      imagePath,
-    });
+    console.log(root);
   };
 
   return (
-    <Layout title="Search">
-      <Wrapper>
+    <Wrapper>
+      <Header>
+        <Back>
+          <TouchableWithoutFeedback onPress={() => navigation.goBack()}>
+            <Entypo
+              name="chevron-small-left"
+              size={28}
+              color={theme.gray.light}
+            />
+          </TouchableWithoutFeedback>
+        </Back>
         <InputBox>
           <InputIcon>
             <MaterialIcons name="search" size={28} color="rgb(128,128,128)" />
           </InputIcon>
           <Input
+            autoFocus
             onChangeText={onChangeText}
             onSubmitEditing={onSubmitEditing}
             value={text}
@@ -130,36 +146,37 @@ const SearchPage = ({ navigation }: SearchPageProps) => {
             </CloseIcon>
           ) : null}
         </InputBox>
-        <TouchableWithoutFeedback onPress={() => Keyboard.dismiss}>
-          {isLoading ? (
-            <Loader size="small" />
-          ) : (
-            <FlatList
-              showsVerticalScrollIndicator={false}
-              data={data?.results}
-              ListHeaderComponent={() =>
-                query !== "" ? (
-                  <Title>{`The results of a search using "${query}"`}</Title>
-                ) : null
-              }
-              renderItem={({ item }) => (
-                <SearchThumbnail
-                  width={WIDTH / COLUMNS_NUM}
-                  height={(WIDTH / COLUMNS_NUM) * 1.5}
-                  id={item.id}
-                  title={item.title || item.name || ""}
-                  imagePath={item.poster_path}
-                  isMovie={item.media_type === "movie"}
-                  goToDetail={goToDetail}
-                />
-              )}
-              numColumns={COLUMNS_NUM}
-              keyExtractor={(item) => item.id + ""}
-            />
-          )}
-        </TouchableWithoutFeedback>
-      </Wrapper>
-    </Layout>
+      </Header>
+      <TouchableWithoutFeedback onPress={() => Keyboard.dismiss}>
+        {isLoading ? (
+          <Loader size="small" />
+        ) : (
+          <FlatList
+            showsVerticalScrollIndicator={false}
+            data={data?.results}
+            ListHeaderComponent={() =>
+              query !== "" ? (
+                <Title>{`The results of a search using "${query}"`}</Title>
+              ) : null
+            }
+            renderItem={({ item, index }) => (
+              <SearchThumbnail
+                width={WIDTH / COLUMNS_NUM}
+                height={(WIDTH / COLUMNS_NUM) * 1.5}
+                id={item.id}
+                title={item.title || item.name || ""}
+                imagePath={item.poster_path}
+                isMovie={item.media_type === "movie"}
+                goToDetail={goToDetail}
+                isLast={index === data?.results.length! - 1}
+              />
+            )}
+            numColumns={COLUMNS_NUM}
+            keyExtractor={(item) => item.id + ""}
+          />
+        )}
+      </TouchableWithoutFeedback>
+    </Wrapper>
   );
 };
 

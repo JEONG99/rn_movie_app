@@ -2,7 +2,11 @@ import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { useEffect, useRef, useState } from "react";
 import { Dimensions } from "react-native";
 import WebView, { WebViewNavigation } from "react-native-webview";
-import { MovieStackParamList, SearchStackParamList } from "../../App";
+import {
+  MovieStackParamList,
+  TrendingStackParamList,
+  TvShowStackParamList,
+} from "../../App";
 import HeaderLeft from "../components/HeaderLeft";
 import HeaderRight from "../components/HeaderRight";
 import styled from "styled-components/native";
@@ -19,7 +23,8 @@ const Wrapper = styled.SafeAreaView`
 
 type WebviewPageProps =
   | NativeStackScreenProps<MovieStackParamList, "Webview">
-  | NativeStackScreenProps<SearchStackParamList, "Webview">;
+  | NativeStackScreenProps<TvShowStackParamList, "Webview">
+  | NativeStackScreenProps<TrendingStackParamList, "Webview">;
 
 const WebviewPage = ({ navigation, route }: WebviewPageProps) => {
   const { path } = route.params;

@@ -9,7 +9,7 @@ export const headerBackgroundShowAtom = atom<boolean>({
 
 export const tabRouteNameAtom = atom<string>({
   key: "tabRouteName",
-  default: "",
+  default: "Movie",
 });
 
 export const searchQueryAtom = atom<string>({

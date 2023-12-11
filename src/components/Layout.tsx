@@ -4,7 +4,7 @@ import { MaterialIcons } from "@expo/vector-icons";
 import { headerBackgroundShowAtom } from "../utils/atom";
 import { LinearGradient } from "expo-linear-gradient";
 import { useEffect, useRef } from "react";
-import { Animated } from "react-native";
+import { Animated, Pressable } from "react-native";
 
 const Container = styled.View`
   flex: 1;
@@ -14,12 +14,17 @@ const Header = styled(Animated.View)<{ $show: boolean }>`
   position: absolute;
   z-index: 1;
   flex-direction: row;
+  justify-content: space-between;
   align-items: center;
-  gap: 6px;
 
   padding: 45px 20px;
   padding-bottom: 10px;
   width: 100%;
+`;
+const HeaderIcon = styled.View`
+  flex-direction: row;
+  align-items: center;
+  gap: 6px;
 `;
 const HeaderText = styled.Text`
   font-size: 38px;
@@ -34,23 +39,23 @@ const BannerShadow = styled(AnimatedLinearGradient)`
   height: 200px;
 `;
 
-export type iconNames = "movie" | "live-tv" | "search" | "video-collection";
+export type iconNames = "movie" | "live-tv" | "video-collection";
 
 const icons: {
   [key: string]: iconNames;
 } = {
   Movie: "movie",
   "Tv Show": "live-tv",
-  Search: "search",
   Hot: "video-collection",
 };
 
 interface ILayoutProps {
   children: any;
   title: string;
+  goSearch: () => void;
 }
 
-const Layout = ({ children, title }: ILayoutProps) => {
+const Layout = ({ children, title, goSearch }: ILayoutProps) => {
   const fadeAnim = useRef(new Animated.Value(1)).current;
   const showBackground = useRecoilValue(headerBackgroundShowAtom);
 
@@ -95,8 +100,15 @@ const Layout = ({ children, title }: ILayoutProps) => {
           }),
         }}
       >
-        <MaterialIcons name={icons[title]} size={36} color="white" />
-        <HeaderText>{title}</HeaderText>
+        <HeaderIcon>
+          <MaterialIcons name={icons[title]} size={36} color="white" />
+          <HeaderText>{title}</HeaderText>
+        </HeaderIcon>
+        <HeaderIcon>
+          <Pressable onPress={goSearch}>
+            <MaterialIcons name="search" size={30} color="white" />
+          </Pressable>
+        </HeaderIcon>
       </Header>
       {children}
     </Container>

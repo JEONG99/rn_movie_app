@@ -45,7 +45,7 @@ const MovieSlider = ({ category, last = false }: ISliderProps) => {
   });
 
   const goDetailPage = (id: number, title: string, imagePath: string) => {
-    navigation.navigate("Detail", {
+    navigation.navigate("MovieDetail", {
       id,
       title,
       imagePath,

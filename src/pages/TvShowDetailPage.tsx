@@ -1,13 +1,8 @@
 import { useState, useEffect } from "react";
-import {
-  ActivityIndicator,
-  ScrollView,
-  TouchableOpacity,
-  Text,
-} from "react-native";
+import { ActivityIndicator, ScrollView, TouchableOpacity } from "react-native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import {
-  SearchStackParamList,
+  MovieStackParamList,
   TrendingStackParamList,
   TvShowStackParamList,
 } from "../../App";
@@ -126,8 +121,8 @@ const LinkText = styled.Text`
 `;
 
 type DetailPageProps =
-  | NativeStackScreenProps<TvShowStackParamList, "Detail">
-  | NativeStackScreenProps<SearchStackParamList, "TvShowDetail">
+  | NativeStackScreenProps<TvShowStackParamList, "TvShowDetail">
+  | NativeStackScreenProps<MovieStackParamList, "TvShowDetail">
   | NativeStackScreenProps<TrendingStackParamList, "TvShowDetail">;
 
 export interface ISelectSeason {
@@ -201,6 +196,7 @@ const TvShowDetailPage = ({ navigation, route }: DetailPageProps) => {
     navigation.goBack();
   };
 
+  /*
   const goWebview = (path: string) => {
     if (!path) return;
     let _navigation;
@@ -231,6 +227,7 @@ const TvShowDetailPage = ({ navigation, route }: DetailPageProps) => {
         break;
     }
   };
+  */
 
   const isLoading = detailLoading || creditsLoading;
   return (
@@ -293,7 +290,11 @@ const TvShowDetailPage = ({ navigation, route }: DetailPageProps) => {
               </CastingText>
             ) : null}
           </CastingBox>
-          <TouchableOpacity onPress={() => goWebview(detail?.homepage || "")}>
+          <TouchableOpacity
+            onPress={() => {
+              //goWebview(detail?.homepage || "")
+            }}
+          >
             <Link>
               <Feather name="link" size={20} color="rgb(0, 100, 194)" />
               <LinkText>Go Homepage</LinkText>

@@ -174,9 +174,13 @@ const TrendingPage = ({ navigation }: TrendingPageProps) => {
     }
   };
 
+  const goSearch = () => {
+    navigation.navigate("Search");
+  };
+
   const isLoading = seariesLoading || moviesLoading;
   return (
-    <Layout title="Hot">
+    <Layout title="Hot" goSearch={goSearch}>
       <Wrapper>
         <StatusBar>
           <ScrollView

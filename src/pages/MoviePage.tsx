@@ -27,11 +27,15 @@ const MoviePage = ({ navigation }: MoviePageProps) => {
 
   const goDetailPage = () => {
     if (!bannerMovie?.id) return;
-    navigation.navigate("Detail", {
+    navigation.navigate("MovieDetail", {
       id: bannerMovie.id,
       title: bannerMovie.title,
       imagePath: bannerMovie.backdrop_path,
     });
+  };
+
+  const goSearch = () => {
+    navigation.navigate("Search");
   };
 
   useEffect(() => {
@@ -42,7 +46,7 @@ const MoviePage = ({ navigation }: MoviePageProps) => {
   }, [data]);
 
   return (
-    <Layout title="Movie">
+    <Layout title="Movie" goSearch={goSearch}>
       <ScrollView
         showsVerticalScrollIndicator={false}
         scrollEventThrottle={scrollEventThrottle}

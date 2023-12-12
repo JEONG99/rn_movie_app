@@ -22,6 +22,7 @@ const TvShowPage = ({ navigation }: TvShowPageProps) => {
     queryKey: ["tv", "airing_today"],
     queryFn: () => getTvShows({ category: "airing_today" }),
     refetchOnWindowFocus: false,
+    refetchOnMount: false,
   });
   const genresResult = useGenres();
 
@@ -38,6 +39,10 @@ const TvShowPage = ({ navigation }: TvShowPageProps) => {
     navigation.navigate("Search");
   };
 
+  const goProfile = () => {
+    navigation.navigate("Profile");
+  };
+
   useEffect(() => {
     if (!data) return;
     setBannerTvShow(
@@ -46,7 +51,7 @@ const TvShowPage = ({ navigation }: TvShowPageProps) => {
   }, [data]);
 
   return (
-    <Layout title="Tv Show" goSearch={goSearch}>
+    <Layout title="Tv Show" goSearch={goSearch} goProfile={goProfile}>
       <ScrollView
         showsVerticalScrollIndicator={false}
         scrollEventThrottle={scrollEventThrottle}
@@ -57,6 +62,7 @@ const TvShowPage = ({ navigation }: TvShowPageProps) => {
           <Banner
             id={bannerTvShow.id}
             path={bannerTvShow?.poster_path || ""}
+            backdropPath={bannerTvShow?.backdrop_path || ""}
             title={bannerTvShow?.name || ""}
             genres={
               bannerTvShow?.genre_ids.map(
@@ -66,6 +72,7 @@ const TvShowPage = ({ navigation }: TvShowPageProps) => {
             }
             isLoading={isLoading}
             goDetailPage={goDetailPage}
+            isMovie={false}
           />
         ) : (
           <View style={{ height: 500 }} />

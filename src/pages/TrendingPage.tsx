@@ -5,7 +5,7 @@ import {
   SectionList,
   ViewToken,
 } from "react-native";
-import { useRef, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import Layout from "../components/Layout";
 import TopTenLogo from "../assets/images/top_ten_logo.svg";
 import { useQuery } from "@tanstack/react-query";
@@ -127,6 +127,7 @@ const TrendingPage = ({ navigation }: TrendingPageProps) => {
   >({
     queryKey: ["trending", "tv"],
     queryFn: getTrendingTvShows,
+    refetchOnMount: false,
     refetchOnWindowFocus: false,
     select: (_data) => ({
       index: 0,
@@ -146,6 +147,7 @@ const TrendingPage = ({ navigation }: TrendingPageProps) => {
   >({
     queryKey: ["trending", "movie"],
     queryFn: getTrendingMovies,
+    refetchOnMount: false,
     refetchOnWindowFocus: false,
     select: (_data) => ({
       index: 1,
@@ -156,31 +158,61 @@ const TrendingPage = ({ navigation }: TrendingPageProps) => {
   });
   const genres = useGenres();
 
-  const goToDetail = (
-    id: number,
-    title: string,
-    imagePath: string,
-    category: string
-  ) => {
-    switch (category) {
-      case "tv":
-        navigation.navigate("TvShowDetail", { id, title, imagePath });
-        break;
-      case "movie":
-        navigation.navigate("MovieDetail", { id, title, imagePath });
-        break;
-      default:
-        break;
-    }
-  };
+  const goToDetail = useCallback(
+    (id: number, title: string, imagePath: string, category: string) => {
+      switch (category) {
+        case "tv":
+          navigation.navigate("TvShowDetail", { id, title, imagePath });
+          break;
+        case "movie":
+          navigation.navigate("MovieDetail", { id, title, imagePath });
+          break;
+        default:
+          break;
+      }
+    },
+    []
+  );
 
   const goSearch = () => {
     navigation.navigate("Search");
   };
 
+  const goProfile = () => {
+    navigation.navigate("Profile");
+  };
+
+  interface IRednderItemFnProps {
+    item: IItem;
+    index: number;
+  }
+
+  const renderItemFn = useCallback(
+    ({ item, index }: IRednderItemFnProps) => (
+      <TrendingItem
+        id={item.id}
+        index={index + 1 + ""}
+        title={item.title}
+        imagePath={item.backdrop_path}
+        posterImagePath={item.poster_path}
+        overview={item.overview}
+        genres={
+          item.genre_ids.map(
+            (id) => genres.find((_genre) => _genre.id === id)?.name || ""
+          ) || []
+        }
+        goToDetail={() =>
+          goToDetail(item.id, item.title, item.backdrop_path, item.category)
+        }
+        isMovie={item.category === "movie"}
+      />
+    ),
+    []
+  );
+
   const isLoading = seariesLoading || moviesLoading;
   return (
-    <Layout title="Hot" goSearch={goSearch}>
+    <Layout title="Hot" goSearch={goSearch} goProfile={goProfile}>
       <Wrapper>
         <StatusBar>
           <ScrollView
@@ -207,6 +239,7 @@ const TrendingPage = ({ navigation }: TrendingPageProps) => {
         {isLoading ? <Loader size="small" /> : null}
         {trendingSearies && trendingMovies ? (
           <SectionList
+            disableVirtualization={false}
             initialNumToRender={40}
             ref={sectionRef}
             onViewableItemsChanged={onViewableItemsChanged}
@@ -219,29 +252,7 @@ const TrendingPage = ({ navigation }: TrendingPageProps) => {
                 <SectionHeaderText>{title}</SectionHeaderText>
               </SectionHeader>
             )}
-            renderItem={({ item, index }) => (
-              <TrendingItem
-                id={item.id}
-                index={index + 1 + ""}
-                title={item.title}
-                imagePath={item.backdrop_path}
-                overview={item.overview}
-                genres={
-                  item.genre_ids.map(
-                    (id) =>
-                      genres.find((_genre) => _genre.id === id)?.name || ""
-                  ) || []
-                }
-                goToDetail={() =>
-                  goToDetail(
-                    item.id,
-                    item.title,
-                    item.backdrop_path,
-                    item.category
-                  )
-                }
-              />
-            )}
+            renderItem={renderItemFn}
             stickySectionHeadersEnabled={true}
           />
         ) : null}

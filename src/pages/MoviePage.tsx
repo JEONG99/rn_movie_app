@@ -22,6 +22,7 @@ const MoviePage = ({ navigation }: MoviePageProps) => {
     queryKey: ["movie", "now_playing"],
     queryFn: () => getMovies({ category: "now_playing" }),
     refetchOnWindowFocus: false,
+    refetchOnMount: false,
   });
   const genresResult = useGenres();
 
@@ -38,6 +39,10 @@ const MoviePage = ({ navigation }: MoviePageProps) => {
     navigation.navigate("Search");
   };
 
+  const goProfile = () => {
+    navigation.navigate("Profile");
+  };
+
   useEffect(() => {
     if (!data) return;
     setBannerMovie(
@@ -46,7 +51,7 @@ const MoviePage = ({ navigation }: MoviePageProps) => {
   }, [data]);
 
   return (
-    <Layout title="Movie" goSearch={goSearch}>
+    <Layout title="Movie" goSearch={goSearch} goProfile={goProfile}>
       <ScrollView
         showsVerticalScrollIndicator={false}
         scrollEventThrottle={scrollEventThrottle}
@@ -57,6 +62,7 @@ const MoviePage = ({ navigation }: MoviePageProps) => {
           <Banner
             id={bannerMovie.id}
             path={bannerMovie?.poster_path || ""}
+            backdropPath={bannerMovie?.backdrop_path || ""}
             title={bannerMovie?.title || ""}
             genres={
               bannerMovie?.genre_ids.map(
@@ -66,6 +72,7 @@ const MoviePage = ({ navigation }: MoviePageProps) => {
             }
             isLoading={isLoading}
             goDetailPage={goDetailPage}
+            isMovie={true}
           />
         ) : (
           <View style={{ height: 500 }} />

@@ -6,6 +6,7 @@ import { BLUR_HASH } from "../../const";
 import useWishList from "../hooks/useWishList";
 import { Entypo } from "@expo/vector-icons";
 import { theme } from "../../theme";
+import React from "react";
 
 const Wrapper = styled.View`
   padding: 5px;
@@ -37,13 +38,7 @@ interface ISearchThumbnailProps {
   id: number;
   title: string;
   imagePath: string;
-  isMovie: boolean;
-  goToDetail: (
-    id: number,
-    title: string,
-    imagePath: string,
-    isMovie: boolean
-  ) => void;
+  goToDetail: () => void;
   isLast: boolean;
 }
 
@@ -53,11 +48,10 @@ const SearchThumbnail = ({
   id,
   title,
   imagePath,
-  isMovie,
   goToDetail,
   isLast,
 }: ISearchThumbnailProps) => {
-  const { isContained } = useWishList(id);
+  const { isContained } = useWishList(id, title);
 
   return (
     <Wrapper
@@ -67,10 +61,7 @@ const SearchThumbnail = ({
         marginBottom: isLast ? 50 : 0,
       }}
     >
-      <TouchableOpacity
-        activeOpacity={0.6}
-        onPress={() => goToDetail(id, title, imagePath, isMovie)}
-      >
+      <TouchableOpacity activeOpacity={0.6} onPress={goToDetail}>
         <ThumbnailBox>
           {isContained ? (
             <Heart>
@@ -93,4 +84,4 @@ const SearchThumbnail = ({
   );
 };
 
-export default SearchThumbnail;
+export default React.memo(SearchThumbnail);

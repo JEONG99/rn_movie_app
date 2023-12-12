@@ -111,7 +111,7 @@ const SearchPage = ({ navigation }: SearchPageProps) => {
   ) => {
     let _navigation;
     switch (root) {
-      case "TvShowHome":
+      case "Tv Show":
         _navigation = navigation as NativeStackScreenProps<
           TvShowStackParamList,
           "Search"
@@ -122,7 +122,7 @@ const SearchPage = ({ navigation }: SearchPageProps) => {
         }
         _navigation.navigate("TvShowDetail", { id, title, imagePath });
         break;
-      case "MovieHome":
+      case "Movie":
         _navigation = navigation as NativeStackScreenProps<
           MovieStackParamList,
           "Search"
@@ -133,7 +133,7 @@ const SearchPage = ({ navigation }: SearchPageProps) => {
         }
         _navigation.navigate("TvShowDetail", { id, title, imagePath });
         break;
-      case "TrendingHome":
+      case "Hot":
         _navigation = navigation as NativeStackScreenProps<
           TrendingStackParamList,
           "Search"
@@ -203,8 +203,14 @@ const SearchPage = ({ navigation }: SearchPageProps) => {
                 id={item.id}
                 title={item.title || item.name || ""}
                 imagePath={item.poster_path}
-                isMovie={item.media_type === "movie"}
-                goToDetail={goToDetail}
+                goToDetail={() =>
+                  goToDetail(
+                    item.id,
+                    item.title || item.name || "",
+                    item.backdrop_path,
+                    item.media_type === "movie"
+                  )
+                }
                 isLast={index === data?.results.length! - 1}
               />
             )}

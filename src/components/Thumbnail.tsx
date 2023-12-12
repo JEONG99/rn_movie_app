@@ -40,7 +40,7 @@ const Thumbnail = ({
   backdropPath,
   goDetailPage,
 }: IThumbnailProps) => {
-  const { isContained } = useWishList(id);
+  const { isContained } = useWishList(id, title);
 
   return (
     <TouchableOpacity

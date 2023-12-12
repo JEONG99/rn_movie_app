@@ -56,9 +56,11 @@ interface ITrendingItemProps {
   index: string;
   title: string;
   imagePath: string;
+  posterImagePath: string;
   overview: string;
   genres: string[];
   goToDetail: () => void;
+  isMovie: boolean;
 }
 
 const TrendingItem = ({
@@ -66,11 +68,17 @@ const TrendingItem = ({
   index,
   title,
   imagePath,
+  posterImagePath,
   overview,
   genres,
   goToDetail,
+  isMovie,
 }: ITrendingItemProps) => {
-  const { disabled, isContained, setWishListToStorage } = useWishList(id);
+  const { disabled, isContained, setWishListToStorage } = useWishList(
+    id,
+    title,
+    isMovie
+  );
 
   return (
     <Wrapper>
@@ -93,7 +101,7 @@ const TrendingItem = ({
           <Icons>
             <TouchableOpacity
               disabled={disabled}
-              onPress={setWishListToStorage}
+              onPress={() => setWishListToStorage(posterImagePath, imagePath)}
             >
               <WishListIcon isChecked={isContained} />
             </TouchableOpacity>

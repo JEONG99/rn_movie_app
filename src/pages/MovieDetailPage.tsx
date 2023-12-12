@@ -22,7 +22,6 @@ import {
 } from "../../App";
 import WishListIcon from "../components/WishListIcon";
 import useWishList from "../hooks/useWishList";
-import { getFocusedRouteNameFromRoute } from "@react-navigation/core";
 import { useRecoilValue } from "recoil";
 import { tabRouteNameAtom } from "../utils/atom";
 
@@ -105,7 +104,11 @@ type DetailPageProps =
 const MovieDetailPage = ({ navigation, route }: DetailPageProps) => {
   const { id, title, imagePath } = route.params;
   const root = useRecoilValue(tabRouteNameAtom);
-  const { disabled, isContained, setWishListToStorage } = useWishList(id);
+  const { disabled, isContained, setWishListToStorage } = useWishList(
+    id,
+    title,
+    true
+  );
   const { data: detail, isLoading: detailLoading } =
     useQuery<IGetMovieDetailResult>({
       queryKey: ["movie", "detail", id],
@@ -139,21 +142,21 @@ const MovieDetailPage = ({ navigation, route }: DetailPageProps) => {
     if (!path) return;
     let _navigation;
     switch (root) {
-      case "MovieHome":
+      case "Movie":
         _navigation = navigation as NativeStackScreenProps<
           MovieStackParamList,
           "MovieDetail"
         >["navigation"];
         _navigation.navigate("Webview", { path });
         break;
-      case "TvShowHome":
+      case "Tv Show":
         _navigation = navigation as NativeStackScreenProps<
           TvShowStackParamList,
           "MovieDetail"
         >["navigation"];
         _navigation.navigate("Webview", { path });
         break;
-      case "TrendingHome":
+      case "Hot":
         _navigation = navigation as NativeStackScreenProps<
           TrendingStackParamList,
           "MovieDetail"
@@ -241,7 +244,9 @@ const MovieDetailPage = ({ navigation, route }: DetailPageProps) => {
           <IconsBlock>
             <TouchableOpacity
               disabled={disabled}
-              onPress={setWishListToStorage}
+              onPress={() =>
+                setWishListToStorage(detail?.poster_path || "", imagePath)
+              }
             >
               <WishListIcon isChecked={isContained} />
             </TouchableOpacity>

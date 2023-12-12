@@ -136,7 +136,11 @@ export interface ISelectSeason {
 const TvShowDetailPage = ({ navigation, route }: DetailPageProps) => {
   const { id, title, imagePath } = route.params;
   const root = useRecoilValue(tabRouteNameAtom);
-  const { disabled, isContained, setWishListToStorage } = useWishList(id);
+  const { disabled, isContained, setWishListToStorage } = useWishList(
+    id,
+    title,
+    false
+  );
   const { data: detail, isLoading: detailLoading } =
     useQuery<IGetTvShowDetailResult>({
       queryKey: ["tv", "detail", id],
@@ -203,21 +207,21 @@ const TvShowDetailPage = ({ navigation, route }: DetailPageProps) => {
     if (!path) return;
     let _navigation;
     switch (root) {
-      case "TvShowHome":
+      case "Tv Show":
         _navigation = navigation as NativeStackScreenProps<
           TvShowStackParamList,
           "TvShowDetail"
         >["navigation"];
         _navigation.navigate("Webview", { path });
         break;
-      case "MovieHome":
+      case "Movie":
         _navigation = navigation as NativeStackScreenProps<
           MovieStackParamList,
           "TvShowDetail"
         >["navigation"];
         _navigation.navigate("Webview", { path });
         break;
-      case "TrendingHome":
+      case "Hot":
         _navigation = navigation as NativeStackScreenProps<
           TrendingStackParamList,
           "TvShowDetail"
@@ -303,7 +307,9 @@ const TvShowDetailPage = ({ navigation, route }: DetailPageProps) => {
           <IconsBlock>
             <TouchableOpacity
               disabled={disabled}
-              onPress={setWishListToStorage}
+              onPress={() =>
+                setWishListToStorage(detail?.poster_path || "", imagePath)
+              }
             >
               <WishListIcon isChecked={isContained} />
             </TouchableOpacity>

@@ -57,21 +57,29 @@ const IconText = styled.Text`
 interface IBannerProps {
   id: number;
   path: string;
+  backdropPath: string;
   title: string;
   genres: string[];
   isLoading: boolean;
   goDetailPage: () => void;
+  isMovie: boolean;
 }
 
 const Banner = ({
   id,
   path,
+  backdropPath,
   title,
   genres,
   isLoading,
   goDetailPage,
+  isMovie,
 }: IBannerProps) => {
-  const { disabled, isContained, setWishListToStorage } = useWishList(id);
+  const { disabled, isContained, setWishListToStorage } = useWishList(
+    id,
+    title,
+    isMovie
+  );
 
   return (
     <Wrapper>
@@ -101,7 +109,7 @@ const Banner = ({
             <IconsBlock>
               <TouchableOpacity
                 disabled={disabled}
-                onPress={setWishListToStorage}
+                onPress={() => setWishListToStorage(path, backdropPath)}
               >
                 <WishListIcon
                   fontSize={14}

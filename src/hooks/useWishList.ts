@@ -4,16 +4,20 @@ import { Alert } from "react-native";
 import { useRecoilState } from "recoil";
 import { WISHLIST_STORAGE_KEY, wishListAtom } from "../utils/atom";
 
-const useWishList = (id: number) => {
+const useWishList = (id: number, title: string, isMovie?: boolean) => {
   const [disabled, setDisabled] = useState(false);
   const [wishList, setWishList] = useRecoilState(wishListAtom);
   const isContained = useMemo(() => {
-    return wishList.find((v) => v === id) !== undefined;
+    return wishList.find((item) => item.id === id) !== undefined;
   }, [wishList]);
 
-  const addToWishList = async () => {
+  const addToWishList = async (posterPath: string, backdropPath: string) => {
+    if (isMovie === undefined) return;
     try {
-      const newWishList = [...wishList, id];
+      const newWishList = [
+        ...wishList,
+        { id, title, isMovie, posterPath, backdropPath },
+      ];
       await AsyncStorage.setItem(
         WISHLIST_STORAGE_KEY,
         JSON.stringify(newWishList)
@@ -28,7 +32,7 @@ const useWishList = (id: number) => {
 
   const deleteToWishList = async () => {
     try {
-      const newWishList = wishList.filter((v) => v !== id);
+      const newWishList = wishList.filter((item) => item.id !== id);
       await AsyncStorage.setItem(
         WISHLIST_STORAGE_KEY,
         JSON.stringify(newWishList)
@@ -41,14 +45,17 @@ const useWishList = (id: number) => {
     }
   };
 
-  const setWishListToStorage = useCallback(() => {
-    setDisabled(true);
-    if (isContained) {
-      deleteToWishList();
-    } else {
-      addToWishList();
-    }
-  }, [isContained]);
+  const setWishListToStorage = useCallback(
+    (posterPath: string, backdropPath: string) => {
+      setDisabled(true);
+      if (isContained) {
+        deleteToWishList();
+      } else {
+        addToWishList(posterPath, backdropPath);
+      }
+    },
+    [isContained]
+  );
 
   return { disabled, isContained, setWishListToStorage };
 };

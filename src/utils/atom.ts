@@ -32,7 +32,15 @@ const getWishList = async () => {
   }
 };
 
-export const wishListAtom = atom<number[]>({
+export const wishListAtom = atom<
+  {
+    id: number;
+    title: string;
+    isMovie: boolean;
+    posterPath: string;
+    backdropPath: string;
+  }[]
+>({
   key: "wishList",
   default: getWishList(),
 });

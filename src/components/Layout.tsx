@@ -4,7 +4,8 @@ import { MaterialIcons } from "@expo/vector-icons";
 import { headerBackgroundShowAtom } from "../utils/atom";
 import { LinearGradient } from "expo-linear-gradient";
 import { useEffect, useRef } from "react";
-import { Animated, Pressable } from "react-native";
+import { Animated, TouchableNativeFeedback } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 
 const Container = styled.View`
   flex: 1;
@@ -17,17 +18,22 @@ const Header = styled(Animated.View)<{ $show: boolean }>`
   justify-content: space-between;
   align-items: center;
 
-  padding: 45px 20px;
+  padding: 55px 20px;
   padding-bottom: 10px;
   width: 100%;
+`;
+const HeaderLogo = styled.Image`
+  width: 32px;
+  height: 32px;
 `;
 const HeaderIcon = styled.View`
   flex-direction: row;
   align-items: center;
-  gap: 6px;
+  gap: 10px;
 `;
 const HeaderText = styled.Text`
-  font-size: 38px;
+  line-height: 32px;
+  font-size: 32px;
   font-weight: 600;
   color: white;
 `;
@@ -39,23 +45,14 @@ const BannerShadow = styled(AnimatedLinearGradient)`
   height: 200px;
 `;
 
-export type iconNames = "movie" | "live-tv" | "video-collection";
-
-const icons: {
-  [key: string]: iconNames;
-} = {
-  Movie: "movie",
-  "Tv Show": "live-tv",
-  Hot: "video-collection",
-};
-
 interface ILayoutProps {
   children: any;
   title: string;
   goSearch: () => void;
+  goProfile: () => void;
 }
 
-const Layout = ({ children, title, goSearch }: ILayoutProps) => {
+const Layout = ({ children, title, goSearch, goProfile }: ILayoutProps) => {
   const fadeAnim = useRef(new Animated.Value(1)).current;
   const showBackground = useRecoilValue(headerBackgroundShowAtom);
 
@@ -100,14 +97,18 @@ const Layout = ({ children, title, goSearch }: ILayoutProps) => {
           }),
         }}
       >
+        {title === "Hot" ? (
+          <HeaderText>HOT</HeaderText>
+        ) : (
+          <HeaderLogo source={require("../assets/images/netflix_logo.png")} />
+        )}
         <HeaderIcon>
-          <MaterialIcons name={icons[title]} size={36} color="white" />
-          <HeaderText>{title}</HeaderText>
-        </HeaderIcon>
-        <HeaderIcon>
-          <Pressable onPress={goSearch}>
+          <TouchableNativeFeedback onPress={goSearch}>
             <MaterialIcons name="search" size={30} color="white" />
-          </Pressable>
+          </TouchableNativeFeedback>
+          <TouchableNativeFeedback onPress={goProfile}>
+            <Ionicons name="person-circle-outline" size={30} color="white" />
+          </TouchableNativeFeedback>
         </HeaderIcon>
       </Header>
       {children}

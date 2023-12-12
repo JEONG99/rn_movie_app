@@ -14,7 +14,6 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { MaterialIcons } from "@expo/vector-icons";
 import TvShowPage from "./src/pages/TvShowPage";
 import MoviePage from "./src/pages/MoviePage";
-import { iconNames } from "./src/components/Layout";
 import { RecoilRoot, useSetRecoilState } from "recoil";
 import { StatusBar } from "expo-status-bar";
 import MovieDetailPage from "./src/pages/MovieDetailPage";
@@ -26,8 +25,12 @@ import SearchPage from "./src/pages/SearchPage";
 import WebviewPage from "./src/pages/WebviewPage";
 import TrendingPage from "./src/pages/TrendingPage";
 import { useEffect, useLayoutEffect } from "react";
-import { View, Dimensions } from "react-native";
+import { View } from "react-native";
 import { enableScreens } from "react-native-screens";
+import ProfilePage from "./src/pages/ProfilePage";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+
+type iconNames = "movie" | "live-tv" | "video-collection";
 
 const webviewHeaderConfig: NativeStackNavigationOptions = {
   headerBackVisible: false,
@@ -46,6 +49,7 @@ const webviewHeaderConfig: NativeStackNavigationOptions = {
 export type MovieStackParamList = {
   MovieHome: undefined;
   Search: undefined;
+  Profile: undefined;
   MovieDetail: { id: number; title: string; imagePath: string };
   TvShowDetail: { id: number; title: string; imagePath: string };
   Webview: { path: string };
@@ -88,6 +92,7 @@ function MovieStackScreen({ route, navigation }: MovieStackScreenProps) {
             component={SearchPage}
             options={{ animation: "none" }}
           />
+          <MovieStack.Screen name="Profile" component={ProfilePage} />
         </MovieStack.Group>
         <MovieStack.Group screenOptions={{ presentation: "modal" }}>
           <MovieStack.Screen name="MovieDetail" component={MovieDetailPage} />
@@ -104,6 +109,7 @@ function MovieStackScreen({ route, navigation }: MovieStackScreenProps) {
 export type TvShowStackParamList = {
   TvShowHome: undefined;
   Search: undefined;
+  Profile: undefined;
   MovieDetail: { id: number; title: string; imagePath: string };
   TvShowDetail: { id: number; title: string; imagePath: string };
   Webview: { path: string };
@@ -147,8 +153,8 @@ function TvShowStackScreen({ route, navigation }: TvShowStackScreenProps) {
             component={SearchPage}
             options={{ animation: "none" }}
           />
+          <TvShowStack.Screen name="Profile" component={ProfilePage} />
         </TvShowStack.Group>
-
         <TvShowStack.Group screenOptions={{ presentation: "modal" }}>
           <TvShowStack.Screen name="MovieDetail" component={MovieDetailPage} />
           <TvShowStack.Screen
@@ -167,6 +173,7 @@ function TvShowStackScreen({ route, navigation }: TvShowStackScreenProps) {
 export type TrendingStackParamList = {
   TrendingHome: undefined;
   Search: undefined;
+  Profile: undefined;
   MovieDetail: { id: number; title: string; imagePath: string };
   TvShowDetail: { id: number; title: string; imagePath: string };
   Webview: { path: string };
@@ -210,6 +217,7 @@ function TrendingStackScreen({ route, navigation }: TrendingStackScreenProps) {
             component={SearchPage}
             options={{ animation: "none" }}
           />
+          <TrendingStack.Screen name="Profile" component={ProfilePage} />
         </TrendingStack.Group>
         <TrendingStack.Group screenOptions={{ presentation: "modal" }}>
           <TrendingStack.Screen
@@ -245,6 +253,7 @@ const TabNavigator = () => {
   return (
     <Tab.Navigator
       initialRouteName="Movie"
+      detachInactiveScreens={false}
       screenOptions={({ route }) => ({
         headerShown: false,
         tabBarLabelStyle: {
@@ -280,7 +289,7 @@ const TabNavigator = () => {
       })}
       screenListeners={({ route }) => ({
         tabPress: () => {
-          setTabRouteName(getFocusedRouteNameFromRoute(route) || "");
+          setTabRouteName(route.name || "");
           setSearchQuery("");
         },
       })}
